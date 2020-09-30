@@ -1,0 +1,31 @@
+
+body {
+    background-color: lightgrey;
+}
+
+h1 {
+    font-family: Arial;
+    text-align: center;
+    font-size: 20px;
+}
+
+p {
+    font-family: Verdana;
+    font-size: 15px;
+    text-align: center;
+}
+
+label {
+    font-family: Verdana, ;
+    font-size: 15px;
+}
+
+input {
+    font-family: Arial;
+    font-size: 15px;
+}
+
+textarea {
+    font-family: Verdana;
+    font-size: 15px;
+}

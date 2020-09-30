@@ -1,7 +1,7 @@
 {
   "name": "node-a1",
   "version": "1.0.0",
-  "description": "\"a node for assignment 1\"",
+  "description": "a node for assignment 1",
   "main": "main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -11,5 +11,8 @@
     "url": "https://git.cs.usask.ca/mad184/cmpt-353.git"
   },
   "author": "marcos",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
 }
