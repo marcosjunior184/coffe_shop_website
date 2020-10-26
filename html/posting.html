@@ -3,15 +3,44 @@
 <html>
 
   <head>
-    <link rel="stylesheet" href="http://localhost/style.css ">
+    <link rel="stylesheet" href="http://localhost:8080/style.css ">
     <title> Forms </title>
 
   </head>
-  <body onload="addPost()">
+  <body onload="checkPost()">
 
     <script type="text/javascript">
     
       function addPost(){
+        var http = new XMLHttpRequest();
+        var url = '/postmessage';
+        http.open('POST', url, true);
+
+        var message = document.getElementById("data").value;
+
+        var params ='topic_input='+document.getElementById("topic_input").value +'&data='+  document.getElementById("data").value;
+        http.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+
+        http.onreadystatechange = function () {
+          if(http.readyState == 4 && http.status == 200) {
+
+            alert("Your message has been posted");
+
+          }
+          else if (http.status >= 400){
+            alert("Your mesage posting has failed");
+          }
+        };
+        http.send(params);
+      };
+
+
+
+
+    </script>
+    
+    <script>
+      function checkPost(){
         var http = new XMLHttpRequest();
         var url = '/post.txt';
         http.open('GET', url, true);
@@ -24,21 +53,15 @@
             document.getElementById("textArea").textContent = http.responseText;
 
           }
-          else if (http.status >= 400){
-            alert("Your mesage posting has failed");
-          }
         };
         http.send();
-        setTimeout('addPost()', 500);
+        setTimeout('checkPost()', 500);
       };
 
-      function popup(){
-        alert("Your message has been posted");
-      }
-
+    
     </script>
 
-    <form action="/postmessage" method="POST">
+    <form>
       
       <div >
         <textarea id="textArea" rows="15" cols="100"></textarea> <br>
@@ -46,11 +69,11 @@
       
       <div >
         <label for="topic">Topic:</label><br> <br>
-        <input type="text" name="topic_input" value="topic"><br> <br>
+        <input type="text" name="topic_input" value="topic" id="topic_input"><br> <br>
 
         <textarea id="data" name="data" rows="10" cols="30"> add text </textarea> <br>
 
-        <input type="submit" value="Submit" onclick="popup()">
+        <button name="SEND" onclick="addPost()"> SEND </button>
       </div>
     </form>
 

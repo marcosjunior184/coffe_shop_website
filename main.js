@@ -6,7 +6,7 @@ const bodyParser = require("body-Parser");
 const fs = require('fs');
 const { get, STATUS_CODES } = require('http');
 
-const PORT = "80";
+const PORT = 8080;
 const HOST = '0.0.0.0';
 const app = express();
  
@@ -48,9 +48,7 @@ app.post('/postmessage', (req,res) => {
     fs.close;
     return ;
   });
-  console.log("On Post");
-
-  res.sendFile(__dirname + "/html/posting.html")
+  res.send();
 });
 
 app.use('/', express.static('html'));
