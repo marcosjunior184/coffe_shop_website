@@ -1,0 +1,21 @@
+name: Marcos da Silva Junior 
+NSID: mad184
+Student #: 11243554
+
+D)
+
+The coding was devided into 3 parts:
+ 1) Set a new database in mysql called "mydb" and set a table post with (Topic, Data, Timestamp)
+ 2) Set up a html file that would display the data from mysql and let user have some choices
+ 3) Set up post methods to set data in the mydb and display it in the order the user desires
+
+The repository allowed the liberty to change functions in the code without losing al the job that was done, 
+ it is, I modified lines and function to compare and see how the program would correspond to the changes. I tested :
+    - if more than one request is sent 
+    - if diffent pages have different preferences in listing the data from database (order them differently)
+    - Chek if the posting in a page with different data order would be posted and sorted accordingly to user preference in another page
+      (it is if the pages have different preference to display the data)
+    - Use wolf-fancing to track data accross the system ensuring that the right data is being sent and received
+    - Select different order to display the posting and manually check if they were indeed in order
+    - Wright to the database entries that should modify the order in the posting area and check if the result was the expected one
+

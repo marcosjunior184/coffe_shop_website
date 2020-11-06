@@ -1,0 +1,49 @@
+name: Marcos da Silva Junior 
+NSID: mad184
+Student #: 11243554
+
+I created the data base in the terminal, so I dont have a /create in the node.js file. Following the steps bellow should create the same table 
+
+Part A)
+
+ - Create a new Database
+CREATE DATABASE mydb;
+
+ - Use the new Database
+USE mydb;
+
+ - Create a table
+CREATE TABLE post (Topic VARCHAR(255), Data VARCHAR(255), Timestamp VARCHAR(55));
+
+ - Check the creating of the table
+SHOW TABLES;
+
+mysql> SHOW TABLES;
++----------------+
+| Tables_in_mydb |
++----------------+
+| post           |
++----------------+
+
+This is part of my first testing
+
+mysql> SELECT * FROM post;
++---------------+-----------------------------------+---------------+
+| Topic         | Data                              | Timestamp     |
++---------------+-----------------------------------+---------------+
+| Teste 1       | Data teste - 1                    | 31/919:10     |
+| Teste 2       | Data teste 2                      | 31/919:12     |
+| Topic test    | Data test                         | 1/10/12:0     |
+| Topic teste   | Data teste -  will it be posted ? | 1/10/12:7     |
+| topic         |  add text                         | 1/10/12:13    |
+| Read          | Will it read                      | 1/10/12:16    |
+| topic         |  add text                         | 1/10/12:26    |
+| topic         |  add text                         | 2/10/12:15    |
+| topic         |  add text                         | 4/10/10:6     |
+| Table test    | Table data test                   | 4/10/10:9     |
+| Another page  | Another page test                 | 4/10/10:10    |
+| topic         |  add text                         | 4/10/10:10    |
+| topic         |  add text                         | 5/10/ - 14:11 |
+| AA            | orer test                         | 5/10/ - 14:53 |
+| Woops         | Last data                         | 6/10/ - 10:59 |
++---------------+-----------------------------------+---------------+

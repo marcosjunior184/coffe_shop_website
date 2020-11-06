@@ -1,8 +1,12 @@
 div{
+    
     position: relative;
+    margin: 0 auto;
     text-align: center;
 }
-form{
+
+table{
     position: relative;
-    align-content: center;
+    text-align: center;
+    margin: 0 auto;
 }

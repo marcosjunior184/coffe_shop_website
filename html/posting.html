@@ -4,7 +4,7 @@
 
   <head>
     <link rel="stylesheet" href="http://localhost:8080/style.css ">
-    <title> Forms </title>
+    <title> Posts </title>
 
   </head>
   <body onload="checkPost()">
@@ -13,7 +13,7 @@
     
       function addPost(){
         var http = new XMLHttpRequest();
-        var url = '/postmessage';
+        var url = '/insert';
         http.open('POST', url, true);
 
         var message = document.getElementById("data").value;
@@ -23,8 +23,8 @@
 
         http.onreadystatechange = function () {
           if(http.readyState == 4 && http.status == 200) {
-
-            alert("Your message has been posted");
+            object = JSON.parse(this.responseText);
+            alert("Your message has been inserted to the database");
 
           }
           else if (http.status >= 400){
@@ -34,48 +34,76 @@
         http.send(params);
       };
 
-
-
-
     </script>
     
     <script>
       function checkPost(){
         var http = new XMLHttpRequest();
-        var url = '/post.txt';
-        http.open('GET', url, true);
-        var params = "Post-/n" + document.getElementById("textArea") + "/n";
+        var url = '/select';
+        http.open('POST', url, true);
+        var typeOfOrder;
+        var typeOfField;
+
+        if (document.getElementById("Topic").checked == true){
+          typeOfField = "Topic";
+        } 
+        else if(document.getElementById("Timestamp").checked == true){
+          typeOfField = "Timestamp";
+        }
+
+        if(document.getElementById("Ascending").checked == true){
+          typeOfOrder = "Asc";
+        }
+        else if(document.getElementById("Descending").checked == true){
+          typeOfOrder = "Desc";
+        }
+
+        var params= 'type_of_field='+typeOfField+'&type_of_order='+typeOfOrder;
+
         http.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 
         http.onreadystatechange = function () {
           if(http.readyState == 4 && http.status == 200) {
-
-            document.getElementById("textArea").textContent = http.responseText;
-
+            myObj = JSON.parse(this.responseText)
+      
+            var table = "<table border='1' id='menu-table' > <th>Topic</th> <th>Data</th> <th>Timestamp</th>"
+            for(count in myObj) {
+                table += "<tr> <td> " + myObj[count].Topic + "</td> <td>" + myObj[count].Data + "</td> <td>"+ myObj[count].Timestamp + "</td></tr>";
+            }
+            
+            table += "</table>";
+            document.getElementById("textArea").innerHTML = table;
           }
         };
-        http.send();
-        setTimeout('checkPost()', 500);
+        http.send(params);
+        setTimeout('checkPost()', 1000);
       };
-
-    
     </script>
 
-    <form>
+    
       
-      <div >
-        <textarea id="textArea" rows="15" cols="100"></textarea> <br>
-      </div>
-      
-      <div >
-        <label for="topic">Topic:</label><br> <br>
-        <input type="text" name="topic_input" value="topic" id="topic_input"><br> <br>
+    <div >
+      <p id="textArea" class="post"></p><br>
+      <p> Please seletc a ordem to display the postings</p>
+      <input type="radio"  id="Descending" name="type_of_order" value="0" checked>Descending
+      <input type="radio"  id="Ascending"  name="type_of_order" value="1">Ascending <br>
 
-        <textarea id="data" name="data" rows="10" cols="30"> add text </textarea> <br>
+      <p> Please select the field to be ordered</p>
+      <input type="radio"  id="Timestamp"  name="field_of_order" value="0" checked>Timestamp order
+      <input type="radio"  id="Topic"      name="field_of_order" value="1" >Topic order <br>
 
-        <button name="SEND" onclick="addPost()"> SEND </button>
-      </div>
-    </form>
+      <br> <br>
+    </div>
+    
+    <div >
+      <label for="topic">Topic:</label><br> <br>
+      <input type="text" name="topic_input" value="topic" id="topic_input"><br> <br>
+
+      <textarea id="data" name="data" rows="10" cols="30"> add text </textarea> <br>
+
+      <button name="SEND" onclick="addPost()"> SEND </button>
+    </div>
+    
 
   </body>
 
