@@ -1,0 +1,5 @@
+Marcos da Silva Junior 
+mad184
+Student #: 11243554
+
+mysql> CREATE TABLE customers (Name VARCHAR(55), ID int NOT NULL AUTO_INCREMENT, Email VARCHAR(55), Credit_Card int NULL, BirthDay DATE, PRIMARY KEY (ID));
