@@ -1,0 +1,67 @@
+<html>
+    <body onload="getMenu()">
+
+        <script>
+            function getMenu(){
+
+                var http = new XMLHttpRequest();
+                var url = '/menuData'
+                http.open('GET', url, true);
+    
+                http.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+    
+                http.onreadystatechange = function (){
+                    if (http.readyState == 4 && http.status == 200){
+                        var menu = JSON.parse(this.responseText);
+    
+                        var tableEspressos = "<table class='table table-striped' id='Espressos-table'> <th>Beverage</th> <th>Price</th>";
+                        var tableLattes = "<table class='table table-striped'id='Lattes-table'> <th>Beverage</th> <th>Price</th>";
+                        var tableTeas = "<table class='table table-striped' id='Teas-table'> <th>Beverage</th> <th>Price</th>";
+                        for (element in menu){
+                            console.log(menu[element].Type);
+                            if(menu[element].Type == 'Espressos'){
+                                tableEspressos += "<tr> <td>"+ menu[element].Item+ "<br>"+ menu[element].Description +"</td> <td>$" + menu[element].Price+"</td></tr>";
+                            }
+                            else if(menu[element].Type == 'Lattes'){
+                                tableLattes += "<tr> <td>"+ menu[element].Item+ "<br>"+ menu[element].Description +"</td> <td>$" + menu[element].Price+"</td></tr>";
+                            }
+                            else if(menu[element].Type == 'Teas'){
+                                tableTeas += "<tr> <td>"+ menu[element].Item+ "<br>"+ menu[element].Description +"</td> <td>$" + menu[element].Price+"</td></tr>";
+                            }
+                        }
+                        document.getElementById("first-table").innerHTML = tableEspressos;
+                        document.getElementById("second-table").innerHTML = tableLattes;
+                        document.getElementById("third-table").innerHTML = tableTeas;
+                    }
+                }
+                http.send();
+            };
+        </script>
+
+
+
+        <div class="row justify-content-center">
+            <div class="col-md-6 mt-2" >
+                <p class="font-weight-bold text-center">ESPRESSOS</p> <br>
+                <div class="container" id="first-table">
+                </div>
+            </div>
+        </div>
+        <div class="row justify-content-center">
+            <div class="col-md-6 mt-2">
+                <p class="font-weight-bold text-center">LATTES</p>
+                <div class="container" id="second-table">
+                    <br>
+                </div>
+            </div>
+        </div>
+        <div class="row justify-content-center">
+            <div class="col-md-6 mt-2">
+                <p class="font-weight-bold text-center">TEAS</p>
+                <div class="container" id="third-table">
+
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

@@ -17,13 +17,13 @@
         
         <ul class="navbar-nav ml-auto">
             <li class="nav-item">
-            <a class="nav-link" href="#">Menu <span class="sr-only">(current)</span></a>
+            <a class="nav-link" href="http://localhost:8080/menu">Menu <span class="sr-only">(current)</span></a>
             </li>
         </ul>
 
         <ul class="navbar-nav ml-auto ">
             <li class="nav-item">
-                <a class="nav-link" href="#">My order<span class="sr-only">(current)</span></a>
+                <a class="nav-link" href="http://localhost:8080/myOrder">My order<span class="sr-only">(current)</span></a>
             </li>
         </ul>
         
@@ -43,8 +43,15 @@
         </ul>
 
         <ul class="navbar-nav ml-auto">
-            <li class="nav-item">
-                <a class="nav-link" href="http://localhost:8080/login">Log In<span class="sr-only">(current)</span></a>
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="menuDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Log in
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                    <a class="dropdown-item" href="http://localhost:8080/login">Log in</a>
+                    <a class="dropdown-item" href="http://localhost:8080/logOn">Log On</a>
+
+                </div>
             </li>
         </ul>
 
