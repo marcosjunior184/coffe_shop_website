@@ -3,38 +3,34 @@
     
     <form action="/login" method="POST">
 
-        <div class="container  justify-content-center mt-4">
+        <div class="col-md-6 container justify-content-center mt-4">
 
             <p>
                 Please enter your personal information to log in
             </p>
 
-            <div class="row">
-                <div class="col-md-6" >
-                    <div class="input-group">
-                        <div class="input-group-prepend" >
-                        <span class="input-group-text">Username</span>
-                        </div>
-                        <input type="text" name="email" id="email" aria-label="email" class="form-control" placeholder="Insert your email">
-                    </div>
-                </div>
+
+
+
+
+
+            <div class="form-group">
+                <label for="InputEmail">Email address</label>
+                <input type="email" class="form-control" id="email" name="email" aria-describedby="emailHelp" placeholder="Enter email">
+            </div>  
+
+
+
+            <div class="form-group">
+                <label for="InputPassword">Password</label>
+                <input type="password" class="form-control" id="password" name="password" placeholder="Password">
             </div>
-            <div class="row mt-4">
-                <div class="col-md-6" >
-                    <div class="input-group">
-                        <div class="input-group-prepend">
-                        <span class="input-group-text" aria-colspan="3"> Password </span>
-                        </div>
-                        <input type="password" id="password" name="password" aria-label="Password entry" class="form-control" placeholder="Password">
-                    </div>
-                </div>
-            </div>
-            <br><br>
+            <br>
             <div class="row">
                 <a href="#" class="nav-link">are youan employee?</a>
             </div>
+            <button type="submit" class="btn btn-primary">Log in</button>
         </div>
-        <button type="submit" class="btn btn-primary">Log in</button>
     </form>
 </body>
 

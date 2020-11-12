@@ -1,0 +1,63 @@
+<body onload="getItemFromDb()">
+
+    <script type="text/javascript">
+
+        function getItemFromDb(){
+            var http = new XMLHttpRequest();
+            var url = '/getItem';
+            http.open('POST', url, true);
+            var Item = '<%= item %>'
+            var params = 'Item='+Item;
+
+            http.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+            
+            http.onreadystatechange = function () {
+            if(http.readyState == 4 && http.status == 200) {
+                var menu = JSON.parse(this.responseText);
+                
+                var desc = menu[0].Description;
+                }
+            document.getElementById('itemDescription').innerHTML = desc;
+            }
+
+            http.send(params);
+        }
+    </script>
+
+    <script type="text/javascript">
+        var http = new XMLHttpRequest();
+        var url = '/setOrder'
+        http.open('POST', url, true);
+
+        var order = '<%= item %>'
+
+        http.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+        http.onreadystatechange = function (){
+            if(http.readyState == 4 && http.status == 200){
+            
+            }
+        }
+
+    </script>
+
+
+
+    <div class="jumbotron justify-content-center mt-4">
+        <img src="../images/Espresso.jpg" width="200" height="80">
+        <h1 class="display-4", id="item"><%= item %></h1>
+
+        <p class="lead" id="itemDescription"></p>
+        <hr class="my-4">
+        <h3>How much would you like?</h3>
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+              <span class="input-group-text" id="inputGroup-sizing-default">Quantity: </span>
+            </div>
+            <input type="text" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default">
+          </div>
+        <p class="lead">
+            <button type="submit" class="btn btn-primary">Add to order</button>
+        </p>
+
+    </div>
+</body>

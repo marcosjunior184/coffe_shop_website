@@ -1,0 +1,71 @@
+<body onload="getMenu()">
+
+    <script>
+      function getMenu(){
+  
+          var http = new XMLHttpRequest();
+          var url = '/menuData'
+          http.open('GET', url, true);
+  
+          http.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+  
+          http.onreadystatechange = function (){
+              if (http.readyState == 4 && http.status == 200){
+                  var menu = JSON.parse(this.responseText);
+  
+                  var EspressosContainer = '<divclass="list-group">';
+                  var LateContainer = '<divclass="list-group">';
+                  var TeasContainer = '<divclass="list-group">';
+  
+                  for (element in menu){
+                      console.log(menu[element].Type);
+                      if(menu[element].Type == 'Espressos'){
+                          EspressosContainer += '<a href="http://localhost:8080/Item/'+ menu[element].Item+'/'+menu[element].Price + '" class="list-group-item list-group-item-action"> ' + menu[element].Item+'</a>';
+                      }
+                      else if(menu[element].Type == 'Lattes'){
+                        LateContainer += '<a href="http://localhost:8080/Item/'+ menu[element].Item+ '/'+menu[element].Price + '" class="list-group-item list-group-item-action"> ' + menu[element].Item+'</a>';
+                      }
+                      else if(menu[element].Type == 'Teas'){
+                        TeasContainer += '<a href="http://localhost:8080/Item/'+ menu[element].Item+ '/'+menu[element].Price + '" class="list-group-item list-group-item-action"> ' + menu[element].Item+'</a>';
+                      }
+                  }
+                  document.getElementById("first-table").innerHTML = EspressosContainer;
+                  document.getElementById("second-table").innerHTML = LateContainer;
+                  document.getElementById("third-table").innerHTML = TeasContainer;
+              }
+          }
+          http.send();
+      };
+  </script>
+  
+  <div class="row justify-content-center mt-2">
+      <h2>You shall start your order <%= name %></h2>
+      <br>
+  </div>
+    
+  <div class="row justify-content-center">
+    <div class="col-md-6 mt-2" >
+        <p class="font-weight-bold text-center">ESPRESSOS</p> <br>
+        <div class="container" id="first-table">
+        </div>
+    </div>
+  </div>
+  <div class="row justify-content-center">
+    <div class="col-md-6 mt-2">
+        <p class="font-weight-bold text-center">LATTES</p>
+        <div class="container" id="second-table">
+            <br>
+        </div>
+    </div>
+  </div>
+  <div class="row justify-content-center">
+    <div class="col-md-6 mt-2">
+        <p class="font-weight-bold text-center">TEAS</p>
+        <div class="container" id="third-table">
+  
+        </div>
+    </div>
+  </div>
+    
+  
+  </body>
