@@ -2,4 +2,19 @@ Marcos da Silva Junior
 mad184
 Student #: 11243554
 
-mysql> CREATE TABLE customers (Name VARCHAR(55), ID int NOT NULL AUTO_INCREMENT, Email VARCHAR(55), Credit_Card int NULL, BirthDay DATE, PRIMARY KEY (ID));
+DATABASE: coffeeshop
+TABLES:
+    - customers
+    - menu
+
+
+ - The database for user aims to storage important information from the user so the store can better serve the customers, been faster and knowing their preference.
+
+mysql> CREATE TABLE custumers (user_id INT AUTO_INCREMENT PRIMARY KEY, First_Name VARCHAR(55), Last_Name VARCHAR(55), Email VARCHAR(55), myOrder VARCHAR(255), Birth_Day VARCHAR(11), Password VARCHAR(255));
+
+
+ - The Menu database is created to display new items to the store, the menu table is consisted of: item, description, promotion, and price. The promotion can be added and removed
+   as needed
+
+mysql> CREATE TABLE menu (Item VARCHAR(55), Type VARCHAR(55), Description VARCHAR(255), Promotion INT, Price DOUBLE(5,2));
+
