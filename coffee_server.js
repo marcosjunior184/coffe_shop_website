@@ -13,7 +13,12 @@ const LocalStrategy = require('passport-local').Strategy;
 const session = require('express-session');
 const { use, authenticate } = require('passport');
 const Store = require('express-session').Store;
+//const redis = require('redis');
+//const { url } = require('inspector');
+//const redisStore = require('connect-redis')(session);
 
+//    store: new redisStore({host: 'localhost', port: 8080, client: client, ttl: 260}),
+//const client = redis.createClient();
 
 const PORT = 8080;
 const HOST = '0.0.0.0';
@@ -40,8 +45,8 @@ app.use(expressLayouts);
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(session({
     secret: 'VERYSECRET',
-    resave: true,
-    saveUninitialized: true
+    resave: false,
+    saveUninitialized: false
 }));
 app.use(flash());
 app.use(passport.initialize());
@@ -91,10 +96,8 @@ passport.serializeUser(function(user, done){
  * Passport deserialization
  */
 passport.deserializeUser(function(id, done){
-    console.log("PRE SQL " + id+1);
     var sql = "SELECT * FROM customers WHERE user_id="+ id;
     con.query(sql, function (err, rows){
-        console.log(rows[0] + '---- des IN QUERy');
         done(err, rows[0]);
     });
 })
@@ -126,6 +129,9 @@ con.connect(function(err){
     console.log("Connect")
 });
 
+// ------------------- ROUTERS --------------------------//
+
+
 /**
  * GET for Root
  */
@@ -133,6 +139,12 @@ app.get('/', (req, res) => {
     
     res.render('index', {name: req.session.username});
 });
+
+app.get('/Item/:itemName/:Price', (req, res) =>{
+    res.render('Item', {item: req.params['itemName'], price: req.params['Price']});
+})
+
+app.post('/getItem', getItem);
 
 /**
  * GET for log in
@@ -143,7 +155,7 @@ app.get('/login', (req, res) => { res.render('login', {'message': req.flash('mes
  * POST method to log in user.
  */
 app.post('/login', passport.authenticate('local', {
-    successRedirect: '/menu',
+    successRedirect: '/',
     failureRedirect: '/login',
     failureFlash: true
 }), function(req, res){
@@ -164,8 +176,18 @@ app.get('/menuData', getMenuData);
  * GET method for log on
  */
 app.get('/logOn', logOn);
+
+/**
+ * POST metoh to add a new user
+ */
 app.post('/insertUser', inserNewUser);
+
+/**
+ * A Get method for my order
+ */
 app.get('/myOrder', isAuthenticated,(req, res) => {res.render('myOrder')});
+
+app.get('/Order', isAuthenticated ,(req, res) => {res.render('OrderForm', {name: req.session.username})});
 
 
 
@@ -194,6 +216,17 @@ async function getMenuData(req, res){
         }
         res.send(result);
     });
+}
+
+async function getItem(req, res){
+    var Item = req.body.Item;
+    
+    var sql = "SELECT * FROM menu WHERE Item="+JSON.stringify(Item);
+    con.query(sql, function(err, result, filds){
+        if(err) throw err;
+        res.send(result)
+    })
+    
 }
 
 /**
