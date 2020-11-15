@@ -6,64 +6,73 @@
     function getMenu(){
 
         var http = new XMLHttpRequest();
-        var url = '/menuData'
-        http.open('GET', url, true);
+        var url = '/getMyOrder'
+        http.open('POST', url, true);
+        var user_id = '<%= id %>'
+        var params = 'user_id='+user_id;
 
         http.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 
         http.onreadystatechange = function (){
             if (http.readyState == 4 && http.status == 200){
-                var menu = JSON.parse(this.responseText);
+                var Order = JSON.parse(this.responseText);
 
-                var EspressosContainer = '<divclass="list-group">';
-                var LateContainer = '<divclass="list-group">';
-                var TeasContainer = '<divclass="list-group">';
+                var SummaryContainer = "<table class='table table-striped' id='Summary_Table'> <th>Items</th> <th>Quantity</th> <th>Total</th> <th></th>";
+                var orderTotal = 0;
+                var quantityTotal = 0;
 
-                for (element in menu){
-                    console.log(menu[element].Type);
-                    if(menu[element].Type == 'Espressos'){
-                        EspressosContainer += '<a href="http://localhost:8080/Item/:'+ menu[element].Item+ '" class="list-group-item list-group-item-action"> ' + menu[element].Item+'</a>';
-                    }
-                    else if(menu[element].Type == 'Lattes'){
-                      LateContainer += '<a href="http://localhost:8080/Item/:'+ menu[element].Item+ '" class="list-group-item list-group-item-action"> ' + menu[element].Item+'</a>';
-                    }
-                    else if(menu[element].Type == 'Teas'){
-                      TeasContainer += '<a href="http://localhost:8080/Item/:'+ menu[element].Item+ '" class="list-group-item list-group-item-action"> ' + menu[element].Item+'</a>';
-                    }
+                for (element in Order){
+                  SummaryContainer += "<tr> <td>"+ Order[element].Item+"</td> <td>"+ Order[element].Quantity +"</td> <td>$" + Order[element].Order_total +"</td> <td><button 'type=submit' class='btn btn-primary' onclick='removeFromOrder("+ Order[element].order_id+")'>Remove</button></td></tr>";
+
+                  orderTotal += Order[element].Order_total;
+                  quantityTotal += Order[element].Quantity;
+                  console.log(orderTotal+ '--' + Order[element].Order_total);
                 }
-                document.getElementById("first-table").innerHTML = EspressosContainer;
-                document.getElementById("second-table").innerHTML = LateContainer;
-                document.getElementById("third-table").innerHTML = TeasContainer;
+                SummaryContainer+= "<tr><td>Your total</td> <td>"+ quantityTotal +"</td> <td>$"+ orderTotal.toFixed(2) +"</td> <td></td></tr></table>";
+                document.getElementById("summary").innerHTML = SummaryContainer;
+
             }
         }
-        http.send();
+        http.send(params);
     };
+
+
+    function removeFromOrder(order_id){
+      var http = new XMLHttpRequest();
+        var url = '/deleteItem'
+        http.open('POST', url, true);
+        var params = 'item_id='+order_id;
+
+
+        http.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+
+        http.onreadystatechange = function (){
+          if(http.readyState == 4 && http.status == 200){
+              alert("Its been removed");
+          }
+        }
+        http.send(params);
+        getMenu();
+    }
 </script>
+
 
 
 
 <div class="row justify-content-center">
   <div class="col-md-6 mt-2" >
-      <p class="font-weight-bold text-center">ESPRESSOS</p> <br>
-      <div class="container" id="first-table">
+      <p class="font-weight-bold text-center">Your order summary</p> <br>
+      <div class="container" id="summary">
       </div>
   </div>
 </div>
-<div class="row justify-content-center">
-  <div class="col-md-6 mt-2">
-      <p class="font-weight-bold text-center">LATTES</p>
-      <div class="container" id="second-table">
-          <br>
-      </div>
-  </div>
-</div>
-<div class="row justify-content-center">
-  <div class="col-md-6 mt-2">
-      <p class="font-weight-bold text-center">TEAS</p>
-      <div class="container" id="third-table">
 
-      </div>
+<div class="row justify-content-end">
+  <div class="col-md-4">
+    <button type=submit class='btn btn-primary'> Proceed to pay</button>
   </div>
 </div>
+
+
 
 </body>
