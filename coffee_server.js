@@ -53,20 +53,17 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 /**
- * Set local strategy for a log in 
+ * Set local strategy for a User log in 
  */
 passport.use('local', new LocalStrategy({
     usernameField: 'email',
-    passwordField: 'password', 
+    passwordField: 'password',
     passReqToCallback: true
 }, function(req, username, password, done){
-
-
     if(!username || !password){return done(null, false, req.flash('message', 'All fields need to be filled'));}
 
     var sql='SELECT * FROM customers where Email='+JSON.stringify(username);
     con.query(sql, function(err, rows){
-        console.log(rows[0].user_id);
         if(err){
             return done(req.flash('message', err));
         }
@@ -80,6 +77,41 @@ passport.use('local', new LocalStrategy({
             }
             req.session.loggedin = true;
             req.session.username = rows[0].First_Name;
+            req.session.user_id = rows[0].user_id;
+            req.session.user_permission = rows[0].authorization;
+            return done (null, rows[0]);
+        });
+    })
+}))
+
+/**
+ * Set local strategy for a Staff log in 
+ */
+passport.use('Staff_logIn', new LocalStrategy({
+    usernameField: 'employee_number',
+    passwordField: 'password',
+    passReqToCallback: true
+}, function(req, username, password, done){
+    console.log("IN STAFF_LOGIN")
+    if(!username || !password){return done(null, false, req.flash('message', 'All fields need to be filled'));}
+
+    var sql='SELECT * FROM staff where Employee_Number='+JSON.stringify(username);
+    con.query(sql, function(err, rows){
+        if(err){
+            return done(req.flash('message', err));
+        }
+        if(!rows.length){
+            return done(null, false, req.flash('message', 'invalied password or email'));
+        }
+
+        bcrypt.compare(password, rows[0].Password, function(err, result){
+            if(!result){
+                return done (null, false, req.flash('message', 'Invalid email or password'));
+            }
+            req.session.loggedin = true;
+            req.session.username = rows[0].First_Name;
+            req.session.user_id = rows[0].Employee_Number;
+            req.session.user_permission = rows[0].authorization;
             return done (null, rows[0]);
         });
     })
@@ -88,18 +120,28 @@ passport.use('local', new LocalStrategy({
 /**
  * Passport serialization
  */
-passport.serializeUser(function(user, done){
-    done(null, user.user_id);
+passport.serializeUser(function(user,done){
+    console.log('In SERIALIZEUSER'+user)
+    done(null, user);
 })
 
 /**
  * Passport deserialization
  */
-passport.deserializeUser(function(id, done){
-    var sql = "SELECT * FROM customers WHERE user_id="+ id;
-    con.query(sql, function (err, rows){
-        done(err, rows[0]);
-    });
+passport.deserializeUser(function(user, done){
+
+    if(user.authorization == 'Client'){
+
+        var sql = "SELECT * FROM customers WHERE user_id="+ user.user_id;
+        con.query(sql, function (err, rows){
+            done(err, rows[0]);
+        });
+    }else if(user.authorization == 'Staff'){
+        var sql = "SELECT * FROM staff WHERE Employee_Number="+ user.Employee_Number;
+        con.query(sql, function (err, rows){
+            done(err, rows[0]);
+        });
+    }
 })
 
 /**
@@ -140,16 +182,22 @@ app.get('/', (req, res) => {
     res.render('index', {name: req.session.username});
 });
 
+/**
+ * Getter for item selected in the Order
+ */
 app.get('/Item/:itemName/:Price', (req, res) =>{
-    res.render('Item', {item: req.params['itemName'], price: req.params['Price']});
+    res.render('Item', {item: req.params['itemName'], price: req.params['Price'], id: req.session.user_id});
 })
 
+/**
+ * Post method to get a particular item
+ */
 app.post('/getItem', getItem);
 
 /**
  * GET for log in
  */
-app.get('/login', (req, res) => { res.render('login', {'message': req.flash('message')});})
+app.get('/login', (req, res) => { res.render('login', {message: req.flash('message')});})
 
 /**
  * POST method to log in user.
@@ -161,6 +209,35 @@ app.post('/login', passport.authenticate('local', {
 }), function(req, res){
     res.render('login', {'message': req.flash('message')});
 });
+
+/**
+ * GET for the staf login page
+ */
+app.get('/staffLogin', (req, res) => {res.render('staff/staffLogin', {message: req.flash('message')})});
+
+/**
+ * POST method to authenticate a staff log in 
+ */
+app.post('/staffLogIn', passport.authenticate('Staff_logIn', {
+    successRedirect: '/staffOrderReview',
+    failureRedirect: '/staffLogin',
+    failureFlash: true
+}),(req, res) => {res.render('staffLogin', {message: req.flash('message')})});
+
+/**
+ * GET for the staff page where the staff_user can check orders and remove them. If the user is Manager will have the ability to add staff to the system
+ */
+app.get('/staffOrderReview', staffAuthentication,(req, res) => {res.render('staff/StaffOrderReview', {name: req.session.username, permission: req.session.user_permission})});
+
+/**
+ * POST method add a new staff
+ */
+app.post('/insertStaff', insertNewStaff);
+
+/**
+ * GET to staff log on page
+ */
+app.get('/StafflogOn', (req, res) => {res.render('staff/StaffLogOn')});
 
 /**
  * GET for Menu
@@ -175,28 +252,44 @@ app.get('/menuData', getMenuData);
 /**
  * GET method for log on
  */
-app.get('/logOn', logOn);
+app.get('/logOn', (req, res) => {res.render('logOn')});
+
 
 /**
- * POST metoh to add a new user
+ * POST method to add a new user
  */
 app.post('/insertUser', inserNewUser);
 
 /**
- * A Get method for my order
+ * A GET method for my order
  */
-app.get('/myOrder', isAuthenticated,(req, res) => {res.render('myOrder')});
+app.get('/myOrder', isAuthenticated,(req, res) => {res.render('myOrder',{id: req.session.user_id})});
 
+/**
+ * A GET method for Order
+ */
 app.get('/Order', isAuthenticated ,(req, res) => {res.render('OrderForm', {name: req.session.username})});
 
+/**
+ * POST to set a order to the database
+ */
+app.post('/setOrder', setOrder);
 
+/**
+ * POST method to get the order of a user from the database
+ */
+app.post('/getMyOrder', getMyOrder);
 
-// FUNCTIONS FOR THE ROUTERS
+/**
+ * POST to delet an Item from a user's order
+ */
+app.post('/deleteItem', deleteItem);
 
+// ------------------------   FUNCTIONS FOR THE ROUTERS -------------------------//
 
 /**
  * Render menu
- * @param {*} req - Require 
+ * @param {*} req - Request 
  * @param {*} res - Response
  */
 async function menu(req, res){
@@ -205,8 +298,8 @@ async function menu(req, res){
 
 /**
  * A function to get menu table from database
- * @param {*} req 
- * @param {*} res 
+ * @param {*} req - Request
+ * @param {*} res - Response
  */
 async function getMenuData(req, res){
     var sql = "SELECT * FROM menu"
@@ -218,6 +311,11 @@ async function getMenuData(req, res){
     });
 }
 
+/**
+ * Get an Item from the database menu
+ * @param {*} req - Request
+ * @param {*} res - Response
+ */
 async function getItem(req, res){
     var Item = req.body.Item;
     
@@ -227,15 +325,6 @@ async function getItem(req, res){
         res.send(result)
     })
     
-}
-
-/**
- * Render logOn
- * @param {*} req - Request
- * @param {*} res - Response
- */
-async function logOn (req, res){
-    await res.render('logOn')
 }
 
 
@@ -254,13 +343,40 @@ async function inserNewUser(req, res){
     }catch{
         res.send('ERROR')
     }
-    var sql = 'INSERT INTO customers (First_Name, Last_Name, Email, Birth_Day, Password) VALUES ('+ JSON.stringify(firstName)+','+JSON.stringify(lastName)+','+JSON.stringify(Email)+','+JSON.stringify(BirthDay)+','+JSON.stringify(hashedPassword)+');';
+    var sql = 'INSERT INTO customers (First_Name, Last_Name, Email, Birth_Day, Password, authorization) VALUES ('+ JSON.stringify(firstName)+','+JSON.stringify(lastName)+','+JSON.stringify(Email)+','+JSON.stringify(BirthDay)+','+JSON.stringify(hashedPassword)+', Client);';
     con.query(sql, function(err, result, fields){
         if(err){
             throw err;
         }
         res.redirect('login')
     });    
+}
+
+/**
+ * Insert a new staff to the database 'staff'
+ * @param {*} req - Request
+ * @param {*} res - Response
+ */
+async function insertNewStaff(req, res){
+    try{
+        var hashedPassword = await bcrypt.hash(req.body.Password, 10)
+        var firstName = req.body.firstName;
+        var lastName = req.body.lastName;
+        var Email = req.body.Email;
+        var BirthDay = req.body.birthDay
+        var EmployeeNumber= req.body.Employee_Number;
+        var permission = req.body.Permission;
+    }catch{
+        res.send('ERROR')
+    }
+
+    var sql = 'INSERT INTO staff (Employee_Number, First_Name, Last_Name, Email, Birth_Day, Password, authorization) VALUES ('+ JSON.stringify(EmployeeNumber) +','+ JSON.stringify(firstName)+','+JSON.stringify(lastName)+','+JSON.stringify(Email)+','+JSON.stringify(BirthDay)+','+JSON.stringify(hashedPassword)+','+ JSON.stringify(permission) + ');';
+    con.query(sql, function(err, result, fields){
+        if(err){
+            throw err;
+        }
+    });    
+    
 }
 
 /**
@@ -276,7 +392,108 @@ function isAuthenticated(req, res, next) {
         return next();
     }
     res.redirect('/login');
+}
+
+/**
+ * Function to authenticate a staff user or a manager user
+ * @param {*} req - Request
+ * @param {*} res - Response 
+ * @param {*} next - callback
+ */
+function staffAuthentication(req, res, next){
+    console.log('IN STAFF AUTHENTICATION' + req.session.user_permission);
+    if(req.session.user_permission == 'Staff' || req.session.user_permission == 'Manager' ){
+        if (req.isAuthenticated()){
+            return next();
+        }
+        res.redirect('/staffLogin');
+    }
+    else{
+        res.redirect('/staffLogin');
+    }
+}
+
+/**
+ * Set a order of a user in the 'Orders' database
+ * @param {*} req - Request 
+ * @param {*} res - Response 
+ */
+  function setOrder(req, res){
+      var item = req.body.item;
+      var id = req.body.id;
+      var quantity = req.body.quantity;
+      var price = req.body.price * quantity;
+
+      var sql = "INSERT INTO Orders (Client_id, Item, Quantity, Order_total) VALUES ("+id +', '+JSON.stringify(item)+ ', '+quantity+', '+price + ');';
+      con.query(sql, function(err, result, fields){
+          if(err){
+              throw err;
+          }
+          res.end();
+      })
+       
   }
+
+  /**
+   * If the database 'Orders' is empty, set the id AUTO_INCREMENT will be reset to 1
+   * So by the end of the day the table should be empty and set back to 1, as we don't want 
+   * the id keep increasing for ever
+   * @param {*} req - Request
+   * @param {*} res - Response
+   */
+  function checkOrder(req, res){
+    var sql = "SELECT EXISTS(SELECT 1 from Orders) AS OUTPUT;";
+    con.query(sql, function(err, result, fields){
+        if(err){
+            throw err;
+        }
+        if(JSON.stringify(result[0].OUTPUT) == 0){
+            con.query("ALTER TABLE Orders AUTO_INCREMENT=1;", function(err, result, fields){
+                if (err){
+                    throw err;
+                }
+                console.log('reset');
+            })
+        }
+    })
+  }
+
+  /**
+   * Method to get the Order of a certain user from the database based on the client id
+   * @param {*} req - Request
+   * @param {*} res - Response
+   */
+  function getMyOrder(req, res){
+    checkOrder(req, res);
+    var user_id = req.body.user_id;
+    var sql = "SELECT * FROM Orders WHERE Client_id="+user_id;
+    con.query(sql, function(err, result, fields){
+        if (err){
+            throw err;
+        }
+        res.send(result);
+    })
+  }
+
+  /**
+   * Delete an item from a customer order removing it from the database
+   * @param {*} req - Request
+   * @param {*} res - Response
+   */
+  function deleteItem(req, res){
+      var itemToDelete = req.body.item_id;
+
+      console.log(itemToDelete);
+
+
+      var sql = "DELETE FROM Orders WHERE order_id="+itemToDelete;
+      con.query(sql, function(err, result, fields){
+          if (err){
+              throw err;
+          }
+      })
+  }
+
 
 
 app.use('/', express.static('views'));
