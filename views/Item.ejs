@@ -15,35 +15,38 @@
             if(http.readyState == 4 && http.status == 200) {
                 var menu = JSON.parse(this.responseText);
                 
-                var desc = menu[0].Description;
+                var desc = menu[0].Description +' -- for just: $'+menu[0].Price;
                 }
             document.getElementById('itemDescription').innerHTML = desc;
             }
 
             http.send(params);
         }
-    </script>
 
-    <script type="text/javascript">
-        var http = new XMLHttpRequest();
-        var url = '/setOrder'
-        http.open('POST', url, true);
+        function addOrder(){
+            var http = new XMLHttpRequest();
+            var url = '/setOrder';
+            http.open('POST', url, true);
+            var order = '<%= item %>';
+            var price = '<%= price %>';
+            var client_id= '<%= id %>';
+            var params = "item="+order+'&price='+price+'&quantity='+document.getElementById('Quantity').value+'&id='+client_id;
 
-        var order = '<%= item %>'
-
-        http.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-        http.onreadystatechange = function (){
-            if(http.readyState == 4 && http.status == 200){
-            
+            http.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+            http.onreadystatechange = function (){
+                if(http.readyState == 4 && http.status == 200){
+                    alert("Its been added to your order")
+                }
             }
-        }
+            http.send(params)
 
+        }
     </script>
+
 
 
 
     <div class="jumbotron justify-content-center mt-4">
-        <img src="../images/Espresso.jpg" width="200" height="80">
         <h1 class="display-4", id="item"><%= item %></h1>
 
         <p class="lead" id="itemDescription"></p>
@@ -53,11 +56,16 @@
             <div class="input-group-prepend">
               <span class="input-group-text" id="inputGroup-sizing-default">Quantity: </span>
             </div>
-            <input type="text" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default">
+            <input type="text" id="Quantity" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default">
           </div>
-        <p class="lead">
-            <button type="submit" class="btn btn-primary">Add to order</button>
-        </p>
+        <div class="row justify-content-between">
+                <div class="col-md-2">
+                    <a type="submit" class="btn btn-primary" href="http://localhost:8080/Order">Back</a>
+                </div>
+                <div class="col-md-4">
+                    <button type="submit" class="btn btn-primary" onclick="addOrder()" >Add to order</button>
+                </div>
+        </div>
 
     </div>
 </body>
