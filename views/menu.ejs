@@ -17,6 +17,7 @@
                         var tableEspressos = "<table class='table table-striped' id='Espressos-table'> <th>Beverage</th> <th>Price</th>";
                         var tableLattes = "<table class='table table-striped'id='Lattes-table'> <th>Beverage</th> <th>Price</th>";
                         var tableTeas = "<table class='table table-striped' id='Teas-table'> <th>Beverage</th> <th>Price</th>";
+                        var tableBreakfast = "<table class='table table-striped' id='Teas-table'> <th>Beverage</th> <th>Price</th>";
                         for (element in menu){
                             console.log(menu[element].Type);
                             if(menu[element].Type == 'Espressos'){
@@ -25,13 +26,17 @@
                             else if(menu[element].Type == 'Lattes'){
                                 tableLattes += "<tr> <td>"+ menu[element].Item+ "<br>"+ menu[element].Description +"</td> <td>$" + menu[element].Price+"</td></tr>";
                             }
-                            else if(menu[element].Type == 'Teas'){
+                            else if( menu[element].Type == 'Teas'){
                                 tableTeas += "<tr> <td>"+ menu[element].Item+ "<br>"+ menu[element].Description +"</td> <td>$" + menu[element].Price+"</td></tr>";
+                            }
+                            else if (menu[element].Type == 'Breakfast'){
+                                tableBreakfast += "<tr> <td>"+ menu[element].Item+ "<br>"+ menu[element].Description +"</td> <td>$" + menu[element].Price+"</td></tr>";
                             }
                         }
                         document.getElementById("first-table").innerHTML = tableEspressos;
                         document.getElementById("second-table").innerHTML = tableLattes;
                         document.getElementById("third-table").innerHTML = tableTeas;
+                        document.getElementById("fourth-table").innerHTML = tableBreakfast;
                     }
                 }
                 http.send();
@@ -40,28 +45,66 @@
 
 
 
-        <div class="row justify-content-center">
-            <div class="col-md-6 mt-2" >
-                <p class="font-weight-bold text-center">ESPRESSOS</p> <br>
-                <div class="container" id="first-table">
-                </div>
-            </div>
-        </div>
-        <div class="row justify-content-center">
-            <div class="col-md-6 mt-2">
-                <p class="font-weight-bold text-center">LATTES</p>
-                <div class="container" id="second-table">
-                    <br>
-                </div>
-            </div>
-        </div>
-        <div class="row justify-content-center">
-            <div class="col-md-6 mt-2">
-                <p class="font-weight-bold text-center">TEAS</p>
-                <div class="container" id="third-table">
 
+
+
+
+
+
+          <ul class="nav nav-tabs nav-fill mt-4" id="myTab" role="tablist">
+            <li class="nav-item">
+              <a class="nav-link active" id="Espresso-tab" data-toggle="tab" href="#Espresso" role="tab" aria-controls="home" aria-selected="true">Espresso</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" id="Latte-tab" data-toggle="tab" href="#Lattes" role="tab" aria-controls="profile" aria-selected="false">Lattes</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" id="Teas-tab" data-toggle="tab" href="#Teas" role="tab" aria-controls="contact" aria-selected="false">Teas</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="Breakfast-tab" data-toggle="tab" href="#Breakfast" role="tab" aria-controls="contact" aria-selected="false">Breakfast</a>
+              </li>
+          </ul>
+          <div class="tab-content" id="myTabContent">
+            <div class="tab-pane fade show active" id="Espresso" role="tabpanel" aria-labelledby="home-tab">
+                <div class="row justify-content-center">
+                    <div class="col-md-6 mt-2" >
+                        <p class="font-weight-bold text-center">ESPRESSOS</p> <br>
+                        <div class="container" id="first-table">
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
+            <div class="tab-pane fade" id="Lattes" role="tabpanel" aria-labelledby="profile-tab">
+                <div class="row justify-content-center">
+                    <div class="col-md-6 mt-2">
+                        <p class="font-weight-bold text-center">LATTES</p>
+                        <div class="container" id="second-table">
+                            <br>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane fade" id="Teas" role="tabpanel" aria-labelledby="contact-tab">
+                <div class="row justify-content-center">
+                    <div class="col-md-6 mt-2">
+                        <p class="font-weight-bold text-center">TEAS</p>
+                        <div class="container" id="third-table">
+        
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane fade" id="Breakfast" role="tabpanel" aria-labelledby="contact-tab">
+                <div class="row justify-content-center mb-4">
+                    <div class="col-md-6 mt-2">
+                        <p class="font-weight-bold text-center">Breakfast</p>
+                        <div class="container" id="fourth-table">
+                            <br>
+                        </div>
+                    </div>
+                  </div>
+            </div>
+          </div>
     </body>
 </html>
