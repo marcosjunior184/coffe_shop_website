@@ -1,5 +1,6 @@
 'use strict'
 
+
 const express = require('express');
 const bodyParser = require('body-Parser');
 const axios = require('axios');
@@ -13,6 +14,7 @@ const LocalStrategy = require('passport-local').Strategy;
 const session = require('express-session');
 const { use, authenticate } = require('passport');
 const Store = require('express-session').Store;
+
 //const redis = require('redis');
 //const { url } = require('inspector');
 //const redisStore = require('connect-redis')(session);
@@ -92,7 +94,6 @@ passport.use('Staff_logIn', new LocalStrategy({
     passwordField: 'password',
     passReqToCallback: true
 }, function(req, username, password, done){
-    console.log("IN STAFF_LOGIN")
     if(!username || !password){return done(null, false, req.flash('message', 'All fields need to be filled'));}
 
     var sql='SELECT * FROM staff where Employee_Number='+JSON.stringify(username);
@@ -105,6 +106,7 @@ passport.use('Staff_logIn', new LocalStrategy({
         }
 
         bcrypt.compare(password, rows[0].Password, function(err, result){
+            console.log("IN STAFF_LOGIN" + result)
             if(!result){
                 return done (null, false, req.flash('message', 'Invalid email or password'));
             }
@@ -116,12 +118,10 @@ passport.use('Staff_logIn', new LocalStrategy({
         });
     })
 }))
-
 /**
  * Passport serialization
  */
 passport.serializeUser(function(user,done){
-    console.log('In SERIALIZEUSER'+user)
     done(null, user);
 })
 
@@ -136,7 +136,7 @@ passport.deserializeUser(function(user, done){
         con.query(sql, function (err, rows){
             done(err, rows[0]);
         });
-    }else if(user.authorization == 'Staff'){
+    }else if(user.authorization == 'Staff' || user.authorization == 'Manager'){
         var sql = "SELECT * FROM staff WHERE Employee_Number="+ user.Employee_Number;
         con.query(sql, function (err, rows){
             done(err, rows[0]);
@@ -219,7 +219,7 @@ app.get('/staffLogin', (req, res) => {res.render('staff/staffLogin', {message: r
  * POST method to authenticate a staff log in 
  */
 app.post('/staffLogIn', passport.authenticate('Staff_logIn', {
-    successRedirect: '/staffOrderReview',
+    successRedirect: '/staffPage',
     failureRedirect: '/staffLogin',
     failureFlash: true
 }),(req, res) => {res.render('staffLogin', {message: req.flash('message')})});
@@ -227,7 +227,7 @@ app.post('/staffLogIn', passport.authenticate('Staff_logIn', {
 /**
  * GET for the staff page where the staff_user can check orders and remove them. If the user is Manager will have the ability to add staff to the system
  */
-app.get('/staffOrderReview', staffAuthentication,(req, res) => {res.render('staff/StaffOrderReview', {name: req.session.username, permission: req.session.user_permission})});
+app.get('/staffPage', staffAuthentication,(req, res) => {res.render('staff/staffPage', {name: req.session.username, permission: req.session.user_permission})});
 
 /**
  * POST method add a new staff
@@ -237,7 +237,15 @@ app.post('/insertStaff', insertNewStaff);
 /**
  * GET to staff log on page
  */
-app.get('/StafflogOn', (req, res) => {res.render('staff/StaffLogOn')});
+app.get('/StafflogOn', managerAuthentication,(req, res) => {res.render('staff/StaffLogOn')});
+
+app.get('/OrderReview', staffAuthentication, (req, res) => {res.render('staff/OrderReview')});
+
+app.get('/getOrderReview', getUsersOrder);
+
+app.get('/MenuChange', staffAuthentication, (req, res) => {res.render('staff/MenuChange')});
+
+app.post('/addToMenu', addToMenu);
 
 /**
  * GET for Menu
@@ -311,6 +319,24 @@ async function getMenuData(req, res){
     });
 }
 
+function addToMenu(req, res){
+    var item = req.body.Item;
+    var price = req.body.Price;
+    var type = req.body.Type;
+    var description = req.body.Description;
+
+    var sql = 'INSERT INTO menu (Item, Type, Description, Price) VALUES ('+JSON.stringify(item)+','+JSON.stringify(type)+','+JSON.stringify(description)+','+price+');'
+
+
+    con.query(sql, function(err, ressult, fields){
+        if (err){
+            throw err;
+        }
+        res.send();
+    })
+    
+}
+
 /**
  * Get an Item from the database menu
  * @param {*} req - Request
@@ -375,6 +401,7 @@ async function insertNewStaff(req, res){
         if(err){
             throw err;
         }
+        res.send();
     });    
     
 }
@@ -401,7 +428,6 @@ function isAuthenticated(req, res, next) {
  * @param {*} next - callback
  */
 function staffAuthentication(req, res, next){
-    console.log('IN STAFF AUTHENTICATION' + req.session.user_permission);
     if(req.session.user_permission == 'Staff' || req.session.user_permission == 'Manager' ){
         if (req.isAuthenticated()){
             return next();
@@ -411,6 +437,34 @@ function staffAuthentication(req, res, next){
     else{
         res.redirect('/staffLogin');
     }
+}
+
+/**
+ * Function to authenticate a staff user or a manager user
+ * @param {*} req - Request
+ * @param {*} res - Response 
+ * @param {*} next - callback
+ */
+function managerAuthentication(req, res, next){
+    if(req.session.user_permission == 'Manager' ){
+        if (req.isAuthenticated()){
+            return next();
+        }
+        res.redirect('/staffPage');
+    }
+    else{
+        res.redirect('/staffLogin');
+    }
+}
+
+function getUsersOrder(req, res){
+    var sql = "SELECT * FROM Orders;";
+    con.query(sql, function(err, ressult, fields){
+        if (err){
+            throw err;
+        }
+        res.send(ressult);
+    })
 }
 
 /**
@@ -452,7 +506,6 @@ function staffAuthentication(req, res, next){
                 if (err){
                     throw err;
                 }
-                console.log('reset');
             })
         }
     })
