@@ -16,11 +16,12 @@
                   var EspressosContainer = '<divclass="list-group">';
                   var LateContainer = '<divclass="list-group">';
                   var TeasContainer = '<divclass="list-group">';
+                  var BreakfastContainer = '<divclass="list-group">';
   
                   for (element in menu){
-                      console.log(menu[element].Type);
+
                       if(menu[element].Type == 'Espressos'){
-                          EspressosContainer += '<a href="http://localhost:8080/Item/'+ menu[element].Item+'/'+menu[element].Price + '" class="list-group-item list-group-item-action"> ' + menu[element].Item+'</a>';
+                        EspressosContainer += '<a href="http://localhost:8080/Item/'+ menu[element].Item+'/'+menu[element].Price + '" class="list-group-item list-group-item-action"> ' + menu[element].Item+'</a>';
                       }
                       else if(menu[element].Type == 'Lattes'){
                         LateContainer += '<a href="http://localhost:8080/Item/'+ menu[element].Item+ '/'+menu[element].Price + '" class="list-group-item list-group-item-action"> ' + menu[element].Item+'</a>';
@@ -28,15 +29,20 @@
                       else if(menu[element].Type == 'Teas'){
                         TeasContainer += '<a href="http://localhost:8080/Item/'+ menu[element].Item+ '/'+menu[element].Price + '" class="list-group-item list-group-item-action"> ' + menu[element].Item+'</a>';
                       }
+                      else if(menu[element].Type == 'Breakfast'){
+                        BreakfastContainer += '<a href="http://localhost:8080/Item/'+ menu[element].Item+ '/'+menu[element].Price + '" class="list-group-item list-group-item-action"> ' + menu[element].Item+'</a>';
+                      }
                   }
                   document.getElementById("first-table").innerHTML = EspressosContainer;
                   document.getElementById("second-table").innerHTML = LateContainer;
                   document.getElementById("third-table").innerHTML = TeasContainer;
+                  document.getElementById("fourth-table").innerHTML = BreakfastContainer;
               }
           }
           http.send();
       };
   </script>
+
   
   <div class="row justify-content-center mt-2">
       <h2>You shall start your order <%= name %></h2>
@@ -66,6 +72,12 @@
         </div>
     </div>
   </div>
-    
-  
-  </body>
+  <div class="row justify-content-center mb-4">
+    <div class="col-md-6 mt-2">
+        <p class="font-weight-bold text-center">Breakfast</p>
+        <div class="container" id="fourth-table">
+            <br>
+        </div>
+    </div>
+  </div>
+</body>
