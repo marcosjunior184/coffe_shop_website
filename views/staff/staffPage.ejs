@@ -1,0 +1,48 @@
+<body>
+
+
+  <div class="jumbotron jumbotron-fluid">
+    <div class="container">
+      <h2 class="display-4">Hello <%= name %>, welcome -- Your permission is of <%= permission %></h2>
+      <p class="lead">Welcome to the staff page.</p>
+    </div>
+  </div>
+
+<div class="jumbotron">
+  <h1 class="display-4">Review Orders </h1>
+  <p class="lead">Review orders that are still pendeing in the system.</p>
+  <hr class="my-4">
+  <p>All the orders have to be removend from the system once they are finished. To do so just click on the button 'Remove', you are allowed to do it item by item. The 
+      user will be notified by order removed
+  </p>
+  <p class="lead">
+    <a class="btn btn-primary btn-lg" href="http://localhost:8080/OrderReview" role="button">Check orders</a>
+  </p>
+</div>
+
+<div class="jumbotron">
+  <h1 class="display-4">Change menu</h1>
+  <p class="lead">--Permission Manager required-- Add or remove options from menu.</p>
+  <hr class="my-4">
+  <p>Add more to menu including promotions, or remove from it. To do so just hit the button to add select 'ADD' and to remove select 'REMOVE',
+    in 'ADD' just fill the form and submit it. To 'Remove' just look at the menu and click 'REMOVE' on the desired item.
+  </p>
+  <p class="lead">
+    <a class="btn btn-primary btn-lg" href="http://localhost:8080/MenuChange" role="button">ADD</a>
+    <a class="btn btn-primary btn-lg" href="#" role="button">REMOVE</a>
+  </p>
+</div>
+
+<div class="jumbotron">
+  <h1 class="display-4">Manage team</h1>
+  <p class="lead">--Permission Manager required-- Add or remove staff from the company.</p>
+  <hr class="my-4">
+  <p>Add staff or remove. To do so select "ADD", to add a new staff to the crew and select "TERMINATE" to remove a staff from the database
+  </p>
+  <p class="lead">
+    <a class="btn btn-primary btn-lg" href="http://localhost:8080/StafflogOn" role="button">ADD</a>
+    <a class="btn btn-primary btn-lg" href="#" role="button">TERMINATE</a>
+  </p>
+</div>
+
+</body>

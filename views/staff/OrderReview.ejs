@@ -1,0 +1,72 @@
+<body onload="getOrders()">
+
+    <script>
+
+        function getOrders(){
+    
+            var http = new XMLHttpRequest();
+            var url = '/getOrderReview'
+            http.open('GET', url, true);
+            console.log("BEEN CONTACTED")
+            http.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+    
+            http.onreadystatechange = function (){
+                if (http.readyState == 4 && http.status == 200){
+                    var Order = JSON.parse(this.responseText);
+    
+                    var SummaryContainer = "<table class='table table-striped' id='Summary_Table'> <th>Items</th> <th>Quantity</th> <th>Total</th> <th></th>";
+                    var orderTotal = 0;
+                    var quantityTotal = 0;
+    
+                    for (element in Order){
+                      SummaryContainer += "<tr> <td>"+ Order[element].Item+"</td> <td>"+ Order[element].Quantity +"</td> <td>$" + Order[element].Order_total +"</td> <td><button 'type=submit' class='btn btn-primary' onclick='removeFromOrder("+ Order[element].order_id+")'>Remove</button></td></tr>";
+    
+                      orderTotal += Order[element].Order_total;
+                      quantityTotal += Order[element].Quantity;
+                      console.log(orderTotal+ '--' + Order[element].Order_total);
+                    }
+                    SummaryContainer+= "</table>";
+                    document.getElementById("summary").innerHTML = SummaryContainer;
+    
+                }
+            }
+            http.send();
+        };
+    
+    
+        function removeFromOrder(order_id){
+          var http = new XMLHttpRequest();
+            var url = '/deleteItem'
+            http.open('POST', url, true);
+            var params = 'item_id='+order_id;
+    
+    
+            http.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+    
+            http.onreadystatechange = function (){
+              if(http.readyState == 4 && http.status == 200){
+                  alert("Its been removed");
+              }
+            }
+            http.send(params);
+            getOrders();
+        }
+    </script>
+
+
+    <div class="row justify-content-center">
+        <div class="col-md-6 mt-2" >
+            <p class="font-weight-bold text-center">Your order summary</p> <br>
+            <div class="container" id="summary">
+            </div>
+        </div>
+    </div>
+    
+    <div class="row ">
+        <div class="col-md-4">
+        <a type="submit" class="btn btn-primary" href="http://localhost:8080/staffPage">Back</a>
+        </div>
+    </div>
+
+
+</body>

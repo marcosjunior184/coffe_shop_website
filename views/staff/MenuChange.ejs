@@ -1,0 +1,61 @@
+<body>
+
+    <script>
+        function addToMenu(){
+            var http = new XMLHttpRequest();
+            var url = '/addToMenu';
+            http.open('POST', url, true);
+            var params = 'Item='+ document.getElementById('inputName').value +'&Price='+document.getElementById('inputPrice').value+'&Type='+document.getElementById('itemType').value+ '&Description='+document.getElementById('inputDescription').value;
+            
+            http.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+            
+            http.onreadystatechange = function () {
+            if(http.readyState == 4 && http.status == 200) {
+                alert("It has been inserted");
+                }
+            }
+
+            http.send(params);
+        }
+    </script>
+
+<form>
+
+    <div class="row form-group justify-content-md-center mt-5">
+        <div class="col-md-4">
+            <label for="inputName">Item name</label>
+            <input type="text" class="form-control" id="inputName" placeholder="item name">
+        </div>
+        <div class="col-md-4">
+            <label for="inputPrice">item price</label>
+            <input type="text" class="form-control" id="inputPrice" placeholder="Price">
+        </div>
+    </div>
+    <div class="form-row justify-content-md-center">
+        <div class="form-group col-md-4">
+            <label for="itemType">item Type</label>
+            <select id="itemType" class="form-control">
+                <option>Espressos</option>
+                <option>Lattes</option>
+                <option>Teas</option>
+                <option>Breakfast</option>
+            </select>
+        </div>
+    </div>
+    <div class="row justify-content-md-center">
+        <div class="form-group col-md-8">
+            <label for="inputDescription">Item description</label>
+            <textarea class="form-control" id="inputDescription" rows="3"></textarea>
+          </div>
+    </div>
+    <div class="form-row justify-content-between">
+        <div class="form-group col-md-3 offset-md-2">
+            <a type="submit" class="btn btn-primary" href="http://localhost:8080/staffPage">Back</a>
+        </div>
+        <div class="form-group col-md-3">
+            <button type="submit" class="btn btn-primary" onclick="addToMenu()">Add</button>
+        </div>
+    </div>
+</form>
+
+</body>
