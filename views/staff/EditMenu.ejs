@@ -1,0 +1,146 @@
+<body onload="getMenu()">
+
+    <script>
+        function getMenu(){
+  
+          var http = new XMLHttpRequest();
+          var url = '/menuData'
+          http.open('GET', url, true);
+
+  
+          http.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+  
+          http.onreadystatechange = function (){
+            if (http.readyState == 4 && http.status == 200){
+                var menu = JSON.parse(this.responseText);
+
+                var tableEspressos = "<table class='table table-striped' id='Espresso_Table'> <th>Beverage</th> <th>Price</th> <th></th> <th></th>";
+                var tableLattes = "<table class='table table-striped' id='Latte_Table'> <th>Beverage</th> <th>Price</th> <th></th> <th></th>";
+                var tableTeas = "<table class='table table-striped' id='Teas_Table'> <th>Beverage</th> <th>Price</th> <th></th> <th></th>";
+                var tableBreakfast = "<table class='table table-striped' id='Breakfast_Table'> <th>Beverage</th> <th>Price</th> <th></th> <th></th> ";
+
+                for (element in menu){
+
+                    if(menu[element].Type == 'Espressos'){
+                        tableEspressos += "<tr> <td>"+ menu[element].Item+ "<br>"+ menu[element].Description +"</td> <td>$" + menu[element].Price+"</td>";
+                        tableEspressos += "<td><button type='submit' class='btn btn-primary' onclick='removeFromOrder("+ JSON.stringify(menu[element].Item)+")'>Remove</button></td>";
+                        tableEspressos += "<td>'<a  type='submit' class='btn btn-primary' href='http://localhost:8080/EditItem/"+ menu[element].Item+"'>Edit info</a> </td> </tr>";
+                    }
+                    else if(menu[element].Type == 'Lattes'){
+                        tableLattes += "<tr> <td>"+ menu[element].Item+ "<br>"+ menu[element].Description +"</td> <td>$" + menu[element].Price+"</td>";
+                        tableLattes += "<td><button type='submit' class='btn btn-primary' onclick='removeFromOrder("+ JSON.stringify(menu[element].Item) +")'>Remove</button></td>" ;
+                        tableLattes += "<td>'<a  type='submit' class='btn btn-primary' href='http://localhost:8080/EditItem/"+ menu[element].Item+"'>Edit info</a></td> </tr>";
+                    }
+                    else if( menu[element].Type == 'Teas'){
+                        tableTeas += "<tr> <td>"+ menu[element].Item+ "<br>"+ menu[element].Description +"</td> <td>$" + menu[element].Price+"</td>" ;
+                        tableTeas += "<td><button type='submit' class='btn btn-primary' onclick='removeFromOrder("+ JSON.stringify(menu[element].Item) +")'>Remove</button></td>";
+                        tableTeas += "<td>'<a  type='submit' class='btn btn-primary' href='http://localhost:8080/EditItem/"+ menu[element].Item+"'>Edit info</a> </td> </tr>";
+                    }
+                    else if (menu[element].Type == 'Breakfast'){
+                        tableBreakfast += "<tr> <td>"+ menu[element].Item+ "<br>"+ menu[element].Description +"</td> <td>$" + menu[element].Price+"</td>";
+                        tableBreakfast += "<td><button type='submit' class='btn btn-primary' onclick='removeFromOrder("+ JSON.stringify(menu[element].Item) +")'>Remove</button></td>";
+                        tableBreakfast += "<td>'<a  type='submit' class='btn btn-primary' href='http://localhost:8080/EditItem/"+ menu[element].Item+"'>Edit info</a> </td> </tr>";
+                    }
+                }
+                tableEspressos += '</table>';
+                tableLattes += '</table>';
+                tableTeas += '</table>';
+                tableBreakfast += '</table>';
+
+                document.getElementById("first-table").innerHTML = tableEspressos;
+                document.getElementById("second-table").innerHTML = tableLattes;
+                document.getElementById("third-table").innerHTML = tableTeas;
+                document.getElementById("fourth-table").innerHTML = tableBreakfast;
+            }
+        }
+          http.send();
+    };
+  
+        function removeFromOrder(Item){
+            var http = new XMLHttpRequest();
+            var url = '/RemoveFromMenu'
+            http.open('POST', url, true);
+            var item = Item
+            var params = 'Item='+item;
+
+    
+            http.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+    
+            http.onreadystatechange = function (){
+                if(http.readyState == 4 && http.status == 200){
+                    alert("Its been removed");
+                }
+            }
+            http.send(params);
+            getMenu();
+        };
+    </script>
+  
+  <div class="alert alert-warning" role="alert">
+    The item inserted bellow will be completely removed from menu. If you wish to modify an item information there is a section for modify info in menu. 
+  </div>
+
+  
+  <ul class="nav nav-tabs nav-fill mt-4" id="myTab" role="tablist">
+    <li class="nav-item">
+      <a class="nav-link active" id="Espresso-tab" data-toggle="tab" href="#Espresso" role="tab" aria-controls="Espresso" aria-selected="true">Espresso</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" id="Latte-tab" data-toggle="tab" href="#Lattes" role="tab" aria-controls="Latte" aria-selected="false">Lattes</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" id="Teas-tab" data-toggle="tab" href="#Teas" role="tab" aria-controls="Teas" aria-selected="false">Teas</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" id="Breakfast-tab" data-toggle="tab" href="#Breakfast" role="tab" aria-controls="Breakfast" aria-selected="false">Breakfast</a>
+      </li>
+  </ul>
+  <div class="tab-content" id="myTabContent">
+    <div class="tab-pane fade show active" id="Espresso" role="tabpanel" aria-labelledby="Espresso-tab">
+        <div class="row justify-content-center">
+            <div class="col-md-12 mt-2" >
+                <p class="font-weight-bold text-center">ESPRESSOS</p> <br>
+                <div class="container" id="first-table">
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="tab-pane fade" id="Lattes" role="tabpanel" aria-labelledby="Latte-tab">
+        <div class="row justify-content-center">
+            <div class="col-md-12 mt-2">
+                <p class="font-weight-bold text-center">LATTES</p>
+                <div class="container" id="second-table">
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="tab-pane fade" id="Teas" role="tabpanel" aria-labelledby="Teas-tab">
+        <div class="row justify-content-center">
+            <div class="col-md-12 mt-2">
+                <p class="font-weight-bold text-center">TEAS</p>
+                <div class="container" id="third-table">
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="tab-pane fade" id="Breakfast" role="tabpanel" aria-labelledby="Breakfast-tab">
+        <div class="row justify-content-center mb-4">
+            <div class="col-md-12 mt-2">
+                <p class="font-weight-bold text-center">Breakfast</p>
+                <div class="container" id="fourth-table">
+
+                </div>
+            </div>
+          </div>
+    </div>
+  </div>
+  <div class="row justify-content-between">
+        <div class="col-md-6">
+            <a type="submit" class="btn btn-primary" href="http://localhost:8080/staffPage">Back</a>
+        </div>
+
+    </div>
+</body>
+  
