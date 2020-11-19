@@ -1,0 +1,132 @@
+<body>
+
+
+    <script>
+
+        function edit(field_edited){
+            if (field_edited == 'Item'){
+                var params = 'field='+field_edited+'&value='+document.getElementById('Item_Name').value+'&Item=<%= item %>';
+            }else if (field_edited == 'Type'){
+                var params = 'field='+field_edited+'&value='+document.getElementById('typeSelect').value +'&Item=<%= item %>';
+            }else if (field_edited == 'Description'){
+                var params = 'field='+field_edited+'&value='+document.getElementById('Description').value +'&Item=<%= item %>';
+            }else if (field_edited == 'Promotion'){
+                var params = 'field='+field_edited+'&value='+document.getElementById('Promotion').value +'&Item=<%= item %>';
+            }else if (field_edited == 'Price'){
+                var params = 'field='+field_edited+'&value='+document.getElementById('Price').value +'&Item=<%= item %>';
+            }
+
+            var http = new XMLHttpRequest();
+            var url = '/itemEdit'
+            http.open('POST', url, true);
+    
+            http.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+    
+            http.onreadystatechange = function (){
+                if(http.readyState == 4 && http.status == 200){
+                    alert("The item has been modified successfuly");
+                }
+            }
+            http.send(params);
+        }
+
+    </script>
+
+
+    <div class="row justify-content-center">
+        <h3 class="display-4" id="item">Your are editing <%= item %></h3>
+    </div>
+
+    <div class="alert alert-info" role="alert">
+        You can modify just one information at a time
+      </div>
+
+      <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+        <li class="nav-item">
+            <a class="nav-link active" id="pills-itmeName-tab" data-toggle="pill" href="#pills-Name" role="tab" aria-controls="pills-Name" aria-selected="true">Item name</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="pills-Type-tab" data-toggle="pill" href="#pills-Type" role="tab" aria-controls="pills-Type" aria-selected="false">Type</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="pills-Description-tab" data-toggle="pill" href="#pills-Description" role="tab" aria-controls="pills-Description" aria-selected="false">Description</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="pills-Promotion-tab" data-toggle="pill" href="#pills-Promotion" role="tab" aria-controls="pills-Promotion" aria-selected="false">Promotion</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="pills-Price-tab" data-toggle="pill" href="#pills-Price" role="tab" aria-controls="pills-Price" aria-selected="false">Price</a>
+        </li>
+      </ul>
+      <div class="tab-content" id="pills-tabContent">
+        <div class="tab-pane fade show active mt-5" id="pills-Name" role="tabpanel" aria-labelledby="pills-itemName-tab">
+            <div class="input-group mb-5">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">Enter the new name for <%= item%> </span>
+                </div>
+                <input type="text" class="form-control" id="Item_Name">
+                <div class="input-group-append">
+                    <button class="btn btn-outline-secondary" type="submit" onclick="edit('Item')">Submit</button>
+                </div>
+            </div>
+            
+        </div>
+        <div class="tab-pane fade mt-5" id="pills-Type" role="tabpanel" aria-labelledby="pills-Type-tab">
+            <div class="input-group mb-5">
+                <div class="input-group-prepend">
+                  <label class="input-group-text" for="typeSelect">Select a new type</label>
+                </div>
+                <select class="custom-select" id="typeSelect">
+                  <option selected>Espressos</option>
+                  <option>Lattes</option>
+                  <option>Teas</option>
+                  <option>Breakfast</option>
+                </select>
+                <div class="input-group-append">
+                    <button class="btn btn-outline-secondary" type="submit" onclick="edit('Type')">Submit</button>
+                </div>
+            </div>
+        </div>
+        <div class="tab-pane fade mt-5" id="pills-Description" role="tabpanel" aria-labelledby="pills-Description-tab">
+            <div class="input-group mb-5">
+                <div class="input-group-prepend">
+                  <span class="input-group-text">Enter new Description</span>
+                </div>
+                <textarea class="form-control" aria-label="With textarea" id="Description"></textarea>
+                <div class="input-group-append">
+                    <button class="btn btn-outline-secondary" type="submit" onclick="edit('Description')">Submit</button>
+                </div>
+            </div>
+        </div>
+        <div class="tab-pane fade mt-5" id="pills-Promotion" role="tabpanel" aria-labelledby="pills-Promotion-tab">
+            <div class="input-group mb-5">
+                <div class="input-group-prepend">
+                  <span class="input-group-text">Enter the promotion in %</span>
+                </div>
+                <input type="text" class="form-control" id="Promotion">
+                <div class="input-group-append">
+                    <button class="btn btn-outline-secondary" type="submit" onclick="edit('Promotion')">Submit</button>
+                </div>
+            </div>
+        </div>
+        <div class="tab-pane fade mt-5" id="pills-Price" role="tabpanel" aria-labelledby="pills-Price-tab">
+            <div class="input-group mb-5">
+                <div class="input-group-prepend">
+                  <span class="input-group-text">new price $</span>
+                </div>
+                <input type="text" class="form-control" id="Price" aria-label="Amount (to the nearest dollar)">
+                <div class="input-group-append">
+                    <button class="btn btn-outline-secondary" type="submit" onclick="edit('Price')">Submit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row justify-content-between">
+        <div class="col-md-6">
+            <a type="submit" class="btn btn-primary" href="http://localhost:8080/EditMenu">Back</a>
+        </div>
+
+    </div>
+
+</body>
