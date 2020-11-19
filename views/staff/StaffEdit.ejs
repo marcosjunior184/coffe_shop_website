@@ -1,0 +1,132 @@
+<body>
+
+    <script>
+
+        function edit(field_edited){
+            if (field_edited == 'First_Name'){
+                var params = 'field='+field_edited+'&value='+document.getElementById('First_Name').value+'&Emp_Number=<%= emp_number %>';
+            }else if (field_edited == 'Last_Name'){
+                var params = 'field='+field_edited+'&value='+document.getElementById('Last_Name').value +'&Emp_Number=<%= emp_number %>';
+            }else if (field_edited == 'Email'){
+                var params = 'field='+field_edited+'&value='+document.getElementById('Email').value +'&Emp_Number=<%= emp_number %>';
+            }else if (field_edited == 'Birth_Day'){
+                var params = 'field='+field_edited+'&value='+document.getElementById('Birth_Day').value +'&Emp_Number=<%= emp_number %>';
+            }else if (field_edited == 'authorization'){
+                var params = 'field='+field_edited+'&value='+document.getElementById('Authorization').value +'&Emp_Number=<%= emp_number%>';
+            }
+
+            var http = new XMLHttpRequest();
+            var url = '/EditStaff'
+            http.open('POST', url, true);
+
+            http.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+
+            http.onreadystatechange = function (){
+                if(http.readyState == 4 && http.status == 200){
+                    alert("The item has been modified successfuly");
+                }
+            }
+            http.send(params);
+        }
+
+    </script>
+
+
+    <div class="row justify-content-center">
+        <h3 class="display-4" id="item">Your are editing employee number <%= emp_number %></h3>
+    </div>
+
+    <div class="alert alert-info" role="alert">
+        You can modify just one information at a time
+    </div>
+
+    <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+        <li class="nav-item">
+            <a class="nav-link active" id="pills-FirstName-tab" data-toggle="pill" href="#pills-FirstName" role="tab" aria-controls="pills-FirstName" aria-selected="true">First Name</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="pills-LastName-tab" data-toggle="pill" href="#pills-LastName" role="tab" aria-controls="pills-LastName" aria-selected="false">Last Name</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="pills-Email-tab" data-toggle="pill" href="#pills-Email" role="tab" aria-controls="pills-Email" aria-selected="false">Email</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="pills-Birth_Day-tab" data-toggle="pill" href="#pills-Birth_Day" role="tab" aria-controls="pills-Birth_Day" aria-selected="false">Birth day</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="pills-auth-tab" data-toggle="pill" href="#pills-auth" role="tab" aria-controls="pills-auth" aria-selected="false">Authorization</a>
+        </li>
+    </ul>
+    <div class="tab-content" id="pills-tabContent">
+        <div class="tab-pane fade show active mt-5" id="pills-FirstName" role="tabpanel" aria-labelledby="pills-FirstName-tab">
+            <div class="input-group mb-5">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">Enter new first name </span>
+                </div>
+                <input type="text" class="form-control" id="First_Name">
+                <div class="input-group-append">
+                    <button class="btn btn-outline-secondary" type="submit" onclick="edit('First_Name')">Submit</button>
+                </div>
+            </div>
+            
+        </div>
+        <div class="tab-pane fade mt-5" id="pills-LastName" role="tabpanel" aria-labelledby="pills-LastName-tab">
+            <div class="input-group mb-5">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">Enter new last name </span>
+                </div>
+                <input type="text" class="form-control" id="Last_Name">
+                <div class="input-group-append">
+                    <button class="btn btn-outline-secondary" type="submit" onclick="edit('Last_Name')">Submit</button>
+                </div>
+            </div>
+        </div>
+        <div class="tab-pane fade mt-5" id="pills-Email" role="tabpanel" aria-labelledby="pills-Email-tab">
+            <div class="input-group mb-5">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">Enter new Email </span>
+                </div>
+                <input type="text" class="form-control" id="Email">
+                <div class="input-group-append">
+                    <button class="btn btn-outline-secondary" type="submit" onclick="edit('Email')">Submit</button>
+                </div>
+            </div>
+        </div>
+        <div class="tab-pane fade mt-5" id="pills-Birth_Day" role="tabpanel" aria-labelledby="pills-Birth_Day-tab">
+            <div class="input-group mb-5">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">Enter new birth day </span>
+                </div>
+                <input type="text" class="form-control" id="Birth_Day">
+                <div class="input-group-append">
+                    <button class="btn btn-outline-secondary" type="submit" onclick="edit('Birth_Day')">Submit</button>
+                </div>
+            </div>
+        </div>
+        <div class="tab-pane fade mt-5" id="pills-auth" role="tabpanel" aria-labelledby="pills-auth-tab">
+            <div class="input-group mb-5">
+                <div class="input-group-prepend">
+                  <label class="input-group-text" for="typeSelect">Set authorization</label>
+                </div>
+                <select class="custom-select" id="Authorization">
+                  <option selected>Staff</option>
+                  <option>Manager</option>
+                </select>
+                <div class="input-group-append">
+                    <button class="btn btn-outline-secondary" type="submit" onclick="edit('authorization')">Submit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row justify-content-between">
+        <div class="col-md-6">
+            <a type="submit" class="btn btn-primary" href="http://localhost:8080/StaffManagent">Back</a>
+        </div>
+
+    </div>
+
+
+</body>
+
+
