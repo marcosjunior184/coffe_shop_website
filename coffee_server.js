@@ -14,6 +14,8 @@ const LocalStrategy = require('passport-local').Strategy;
 const session = require('express-session');
 const { use, authenticate } = require('passport');
 const Store = require('express-session').Store;
+const db = require('./db_access');
+
 
 //const redis = require('redis');
 //const { url } = require('inspector');
@@ -243,9 +245,28 @@ app.get('/OrderReview', staffAuthentication, (req, res) => {res.render('staff/Or
 
 app.get('/getOrderReview', getUsersOrder);
 
-app.get('/MenuChange', staffAuthentication, (req, res) => {res.render('staff/MenuChange')});
+app.get('/AddToMenu', managerAuthentication, (req, res) => {res.render('staff/AddToMenu')});
 
 app.post('/addToMenu', addToMenu);
+
+app.get('/EditMenu', managerAuthentication, (req, res) => {res.render('staff/EditMenu')});
+
+app.post('/itemEdit', managerAuthentication, itemEdit);
+
+app.get('/EditItem/:Item', managerAuthentication, (req, res) => { res.render('staff/EditItem', {item: req.params['Item']})});
+
+app.post('/RemoveFromMenu', deleteFromMenu);
+
+app.get('/StaffManagent', managerAuthentication, (req, res) => { res.render('staff/StaffManagement')});
+
+app.post('/getStaff', getStaff);
+
+app.post('/RemoveStaff', RemoveStaff);
+
+app.get('/staffEdit/:StaffNumber', managerAuthentication, (req, res) => {res.render('staff/StaffEdit', {emp_number: req.params['StaffNumber']})});
+
+app.post('/EditStaff', EditStaff);
+
 
 /**
  * GET for Menu
@@ -528,6 +549,17 @@ function getUsersOrder(req, res){
     })
   }
 
+  function getStaff(req, res){
+    var sql = 'SELECT * FROM staff ;';
+
+    con.query(sql, function (err, result, fields){
+        if (err){
+            throw err;
+        }
+        res.send(result);
+    })
+  }
+
   /**
    * Delete an item from a customer order removing it from the database
    * @param {*} req - Request
@@ -535,8 +567,6 @@ function getUsersOrder(req, res){
    */
   function deleteItem(req, res){
       var itemToDelete = req.body.item_id;
-
-      console.log(itemToDelete);
 
 
       var sql = "DELETE FROM Orders WHERE order_id="+itemToDelete;
@@ -547,9 +577,72 @@ function getUsersOrder(req, res){
       })
   }
 
+  function RemoveStaff(req, res){
+      var staffToRemove = req.body.Emp_Number;
+
+      var sql = 'DELETE FROM staff WHERE Employee_Number='+staffToRemove;
+
+      con.query(sql, function(err, result, fields){
+          if (err){
+              throw err;
+          }
+          res.send();
+      })
+  }
+
+  function EditStaff(req, res){
+      var column = req.body.field;
+      var value = req.body.value;
+      var item = req.body.Emp_Number;
+
+      var sql = 'UPDATE staff SET '+column+'='+ JSON.stringify(value)+' Where Employee_Number='+item +' ;';
+
+      con.query(sql, function(err, result, field){
+          if (err){
+              throw err;
+          }
+          res.send();
+      })
+  }
+
+  function itemEdit(req, res){
+    var column = req.body.field;
+    var value = req.body.value;
+    var item = req.body.Item;
+    
+    if (column == 'Promotion' || column == 'Price'){
+        var sql = 'UPDATE menu SET '+column+'='+ value+' Where Item='+JSON.stringify(item) +' ;';
+    }
+    else{
+    var sql = 'UPDATE menu SET '+column+'='+ JSON.stringify(value)+' Where Item='+JSON.stringify(item) +' ;';
+    }
+
+    con.query(sql, function (err, ressult, fields){
+        if (err) {
+            throw err;
+        }
+
+        res.send();
+    })
+  }
+
+  function deleteFromMenu(req, res){
+      var item = req.body.Item;
+
+      var sql = ('DELETE FROM menu WHERE Item='+JSON.stringify(item)+';')
+      con.query(sql, function(err, ressult, fields){
+          if (err){
+              throw err;
+          }
+      })
+      
+  }
+
 
 
 app.use('/', express.static('views'));
+
+app.use(require('./db_access'));
 
 app.listen(PORT, HOST);
 console.log('up and running');
