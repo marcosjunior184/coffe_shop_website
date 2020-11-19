@@ -19,7 +19,7 @@
                         var tableTeas = "<table class='table table-striped' id='Teas-table'> <th>Beverage</th> <th>Price</th>";
                         var tableBreakfast = "<table class='table table-striped' id='Teas-table'> <th>Beverage</th> <th>Price</th>";
                         for (element in menu){
-                            console.log(menu[element].Type);
+
                             if(menu[element].Type == 'Espressos'){
                                 tableEspressos += "<tr> <td>"+ menu[element].Item+ "<br>"+ menu[element].Description +"</td> <td>$" + menu[element].Price+"</td></tr>";
                             }
@@ -42,14 +42,6 @@
                 http.send();
             };
         </script>
-
-
-
-
-
-
-
-
 
           <ul class="nav nav-tabs nav-fill mt-4" id="myTab" role="tablist">
             <li class="nav-item">
