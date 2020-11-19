@@ -1,0 +1,103 @@
+<body onload="getStaff()">
+
+    <script>
+
+        function getStaff(){
+        
+        var http = new XMLHttpRequest();
+        var url = '/getStaff'
+        http.open('POST', url, true);
+
+
+        http.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+
+        http.onreadystatechange = function (){
+            if (http.readyState == 4 && http.status == 200){
+                var staff = JSON.parse(this.responseText);
+
+                var tableStaff = "<table class='table table-striped' id='Staff_Table'> <th>Employee Number</th> <th>First and Last name</th> <th>Email</th> <th>Birth day</th> <th></th> <th></th>";
+                var tableManager = "<table class='table table-striped' id='Manager_Table'>  <th>Employee Number</th> <th>First and Last name</th> <th>Email</th> <th>Birth day</th> <th></th> <th></th> ";
+
+                for (element in staff){
+
+                    if(staff[element].authorization == 'Staff'){
+                        tableStaff += "<tr> <td>"+ staff[element].Employee_Number +"</td> <td>"+ staff[element].First_Name +' '+staff[element].Last_Name+ "</td> <td>" + staff[element].Email+"</td> <td>"+ staff[element].Birth_Day +"</td>";
+                        tableStaff += "<td><button type='submit' class='btn btn-primary' onclick='removeStaff("+ JSON.stringify(staff[element].Employee_Number)+")'>Remove</button></td>";
+                        tableStaff += "<td>'<a  type='submit' class='btn btn-primary' href='http://localhost:8080/staffEdit/"+ staff[element].Employee_Number+"'>Edit info</a> </td> </tr>";
+                    }
+                    else if(staff[element].authorization == 'Manager'){
+                        tableManager += "<tr> <td>"+ staff[element].Employee_Number +"</td> <td>"+ staff[element].First_Name +' '+staff[element].Last_Name+ "</td> <td>" + staff[element].Email+"</td> <td>"+ staff[element].Birth_Day +"</td>";
+                        tableManager += "<td><button type='submit' class='btn btn-primary' onclick='removeStaff("+ JSON.stringify(staff[element].Employee_Number)+")'>Remove</button></td>";
+                        tableManager += "<td>'<a  type='submit' class='btn btn-primary' href='http://localhost:8080/staffEdit/"+ staff[element].Employee_Number+"'>Edit info</a> </td> </tr>";
+                    }
+                }
+                tableStaff += '</table>';
+                tableManager += '</table>';
+
+                document.getElementById("first-table").innerHTML = tableStaff;
+                document.getElementById("second-table").innerHTML = tableManager;
+            }
+        }
+        http.send();
+        };
+
+        function removeStaff(emp_number){
+            var http = new XMLHttpRequest();
+            var url = '/RemoveStaff'
+            http.open('POST', url, true);
+            var params = 'Emp_Number='+emp_number;
+
+            http.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+
+            http.onreadystatechange = function (){
+                if(http.readyState == 4 && http.status == 200){
+                    alert("Its been removed");
+                }
+            }
+            http.send(params);
+            getStaff();
+        }
+
+
+    </script>
+
+
+
+
+
+
+    <ul class="nav nav-tabs nav-fill mt-4" id="myTab" role="tablist">
+        <li class="nav-item">
+        <a class="nav-link active" id="Staff-tab" data-toggle="tab" href="#Staff" role="tab" aria-controls="Staff" aria-selected="true">STAFF</a>
+        </li>
+        <li class="nav-item">
+        <a class="nav-link" id="Manager-tab" data-toggle="tab" href="#Manager" role="tab" aria-controls="Manager" aria-selected="false">MANAGER</a>
+        </li>
+    </ul>
+    <div class="tab-content" id="myTabContent">
+        <div class="tab-pane fade show active" id="Staff" role="tabpanel" aria-labelledby="Staff-tab">
+            <div class="row justify-content-center">
+                <div class="col-md-12 mt-5" >
+                    <div class="container" id="first-table">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="tab-pane fade" id="Manager" role="tabpanel" aria-labelledby="Manager-tab">
+            <div class="row justify-content-center">
+                <div class="col-md-12 mt-5">
+                    <div class="container" id="second-table">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row justify-content-between">
+        <div class="col-md-6">
+            <a type="submit" class="btn btn-primary" href="http://localhost:8080/staffPage">Back</a>
+        </div>
+
+    </div>
+
+</body>
