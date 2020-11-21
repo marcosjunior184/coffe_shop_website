@@ -22,3 +22,18 @@ con.connect(function(err){
     }
     console.log('Connected');
 })
+
+app.use(bodyParser.urlencoded({ extended: true}));
+app.use('/', express.static('views'));
+
+app.get('/', (req, res) => {res.sendFile(__dirname + "/views/indesx.html")});
+
+app.get('/stafflLogin', (req, res) => {res.sendFile(__dirname+ "/views/")});
+
+app.get('/clientLogin', (req, res) => {res.sendFile(__dirname + "/views/clientLogin.html")});
+
+app.get('/ClientPage', (req, res) => {res.sendFile(__dirname + "/views/")});
+
+
+app.listen(PORT, HOST);
+console.log("up and running");
