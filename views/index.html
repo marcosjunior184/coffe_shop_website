@@ -3,14 +3,23 @@
         <title>Coffee Shop</title>
     </head>
     <body>
+
         <div class="container" id="index_Container">
             <h1>Welcome to our coffee Shop</h1>
             <h3>Please let us know what user are you</h3>
             <div>
                 <label>Choose one of the options bellow</label>
-                <br>
-                <button type="submit" onclick="">Client</button>
-                <button type="submit" onclick="">Staff</button>
+                
+                <form action="http://localhost:8080/clientLogin">
+                    <br>
+                    <button type="submit">Client</button>
+                </form>
+                <form action="http://localhost:8080/stafflLogin">
+                    <button type="submit">Staff</button>
+                </form>
+                <form action="http://localhost:8080/">
+                    <button type="submit">Visiting</button>
+                </form>
             </div>
         </div>
     </body>
