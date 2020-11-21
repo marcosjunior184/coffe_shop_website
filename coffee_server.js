@@ -28,9 +28,11 @@ app.use('/', express.static('views'));
 
 app.get('/', (req, res) => {res.sendFile(__dirname + "/views/indesx.html")});
 
-app.get('/stafflLogin', (req, res) => {res.sendFile(__dirname+ "/views/")});
+app.get('/stafflLogin', (req, res) => {res.sendFile(__dirname+ "/views/staffLogin.html")});
 
 app.get('/clientLogin', (req, res) => {res.sendFile(__dirname + "/views/clientLogin.html")});
+
+app.get('/clientLogon', (req, res) => {res.sendFile(__dirname + "/views/clientLogOn.html")});
 
 app.get('/ClientPage', (req, res) => {res.sendFile(__dirname + "/views/")});
 
