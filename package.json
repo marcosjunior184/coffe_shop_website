@@ -1,0 +1,20 @@
+{
+  "name": "assign-4",
+  "version": "0.0.0",
+  "description": "file for assignment 4",
+  "main": "data_server.js",
+  "dependencies": {
+    "express": "^4.17.1",
+    "react": "^17.0.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://git.cs.usask.ca/mad184/cmpt-353.git"
+  },
+  "author": "Marcos",
+  "license": "ISC"
+}
