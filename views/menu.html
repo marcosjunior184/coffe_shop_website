@@ -1,0 +1,105 @@
+<html>
+    <head>
+        <title>Cofee Shop</title>
+    </head>
+    <body onload="getMenu()">
+
+        <style>
+            body {
+                margin: 0;
+                font-family: Arial, Helvetica, sans-serif;
+            }
+                            /* Add a black background color to the top navigation */
+            .topnav {
+                background-color: rgba(145, 99, 12, 0.442);
+                overflow: hidden;
+            }
+
+                /* Style the links inside the navigation bar */
+            .topnav a {
+                float: left;
+                color: #f2f2f2;
+                text-align: center;
+                padding: 14px 16px;
+                text-decoration: none;
+                font-size: 17px;
+            }
+
+                /* Change the color of links on hover */
+            .topnav a:hover {
+                background-color: #ddd;
+                color: rgba(165, 42, 42, 0.564)
+            }
+
+                /* Add a color to the active/current link */
+            .topnav a.active {
+                background-color:black;
+                color: white;
+            }
+        </style>
+
+        <script>
+            function getMenu(){
+                var http = new XMLHttpRequest();
+                var url = '/getMenu'
+                http.open('GET', url, true)
+                
+                http.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+
+                http.onreadystatechange = function(){
+                    if (http.readyState == 4 && http.status == 200){
+                        var menu = JSON.parse(this.responseText);
+
+                        var tableEspressos = "<table class='table ' id='Espressos-table'> <th>Beverage</th> <th>Price</th>";
+                        var tableLattes = "<table class='table 'id='Lattes-table'> <th>Beverage</th> <th>Price</th>";
+                        var tableTeas = "<table class='table ' id='Teas-table'> <th>Beverage</th> <th>Price</th>";
+                        var tableBreakfast = "<table class='table table-striped' id='Teas-table'> <th>Beverage</th> <th>Price</th>";
+
+                        for (element in menu){
+                            if(menu[element].Type == 'Espressos'){
+                                    tableEspressos += "<tr> <td>"+ menu[element].Item+ "<br>"+ menu[element].Description +"</td> <td>$" + menu[element].Price+"</td></tr>";
+                            }
+                            else if(menu[element].Type == 'Lattes'){
+                                tableLattes += "<tr> <td>"+ menu[element].Item+ "<br>"+ menu[element].Description +"</td> <td>$" + menu[element].Price+"</td></tr>";
+                            }
+                            else if( menu[element].Type == 'Teas'){
+                                tableTeas += "<tr> <td>"+ menu[element].Item+ "<br>"+ menu[element].Description +"</td> <td>$" + menu[element].Price+"</td></tr>";
+                            }
+                            else if (menu[element].Type == 'Breakfast'){
+                                tableBreakfast += "<tr> <td>"+ menu[element].Item+ "<br>"+ menu[element].Description +"</td> <td>$" + menu[element].Price+"</td></tr>";
+                            }
+                        }
+                        
+                        document.getElementById("Espressos").innerHTML = tableEspressos;
+                        document.getElementById("Lattes").innerHTML = tableLattes;
+                        document.getElementById("Teas").innerHTML = tableTeas;
+                        document.getElementById("Breakfast").innerHTML = tableBreakfast;
+                    }
+                }
+                http.send();
+
+    
+            }
+        </script>
+
+        <div class="topnav">
+            <a class="active" href="http://localhost:8080/clientPage">Home</a>
+            <a href="http://localhost:8080/menu">Menu</a>
+            <a href="http://localhost:8080/orderForm">Order</a>
+            <a href="#about">MyOrder</a>
+        </div>
+
+        <div class="container" id="Espressos">
+            <p>Espressos</p>
+        </div>
+        <div class="container" id="Lattes">
+            <p>Lattes</p>
+        </div>
+        <div class="container" id="Teas">
+            <p>Teas</p>
+        </div>
+        <div class="container" id="Breakfast">
+            <p>Breakfast</p>
+        </div>
+    </body>
+</html>
