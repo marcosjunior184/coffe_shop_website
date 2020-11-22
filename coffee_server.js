@@ -24,6 +24,7 @@ con.connect(function(err){
 })
 
 app.use(bodyParser.urlencoded({ extended: true}));
+
 app.use('/', express.static('views'));
 
 app.get('/', (req, res) => {res.sendFile(__dirname + "/views/indesx.html")});
@@ -41,6 +42,14 @@ app.get('/staffPage', (req, res) => {res.sendFile(__dirname + "/views/")});
 app.get('/menu', (req, res) => {res.sendFile(__dirname + "/views/menu.html")});
 
 app.get('/orderForm', (req, res) => {res.sendFile(__dirname + "/views/orderForm.html")});
+
+app.get('/staffPage', (req, res) => {res.sendFile(__dirname + "/views/staffPage.html")});
+
+app.get('/menuEdit', (req, res) => {res.sendFile(__dirname + "/views/menuEdit.html")});
+
+app.get('/menuEdit', (req, res) => {res.sendFile(__dirname + "/views/menuEdit.html")});
+
+app.get('/myOrder', (req, res) => {res.sendFile(__dirname + "/views/myOrder.html")});
 
 //--------------------XHL------------------------------------------//
 
