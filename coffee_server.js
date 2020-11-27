@@ -36,6 +36,8 @@ app.get('/stafflLogin', (req, res) => {res.sendFile(__dirname+ "/views/staffLogi
 
 app.get('/staffPage', (req, res) => {res.sendFile(__dirname + "/views/staffSide/staffPage.html")});
 
+app.get('/MenuAdd', (req, res) => {res.sendFile(__dirname + "/views/staffSide/MenuAdd.html")});
+
 app.get('/OrderReview', (req, res) => {res.sendFile(__dirname+ "/views/staffSide/OrderReview.html")});
 
 app.get('/clientLogin', (req, res) => {res.sendFile(__dirname + "/views/clientLogin.html")});
@@ -63,6 +65,8 @@ app.get('/getOrderReview', getOrders);
 app.post('/addToOrder', addToOrder);
 
 app.post('/completeOrder', completeOrder);
+
+app.post('/addToMenu', addToMenu);
 
 //----------------Functions----------------------------------------//
 
@@ -119,6 +123,23 @@ async function completeOrder(req, res){
     const sql = 'DELETE FROM orders WHERE Item='+JSON.stringify(Item)+' AND OrderNumber='+OrderNum;
 
     con.query(sql, function(err, result, field){
+        if (err){
+            throw err;
+        }
+        res.send();
+    })
+}
+
+async function addToMenu(req, res){
+    const Item = req.body.Item;
+    const Type = req.body.Type;
+    const Description = req.body.Description;
+    const Promotion = req.body.Promotion;
+    const Price = req.body.Price;
+
+    var sql = 'INSERT INTO menu (Item, Type, Description, Price) VALUES ('+JSON.stringify(Item)+','+JSON.stringify(Type)+','+JSON.stringify(Description)+','+ Price+')';
+
+    con.query(sql, function(err, result, fields){
         if (err){
             throw err;
         }
