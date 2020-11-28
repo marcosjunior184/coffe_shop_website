@@ -1,10 +1,15 @@
-<body onload="getMenu()">
+<body onload="toLoad()">
 
 
 
   <script>
-    function getMenu(){
 
+    function toLoad(){
+      getMenu();
+      getMyMessages()
+    }
+
+    function getMenu(){
         var http = new XMLHttpRequest();
         var url = '/getMyOrder'
         http.open('POST', url, true);
@@ -26,7 +31,6 @@
 
                   orderTotal += Order[element].Order_total;
                   quantityTotal += Order[element].Quantity;
-                  console.log(orderTotal+ '--' + Order[element].Order_total);
                 }
                 SummaryContainer+= "<tr><td>Your total</td> <td>"+ quantityTotal +"</td> <td>$"+ orderTotal.toFixed(2) +"</td> <td></td></tr></table>";
                 document.getElementById("summary").innerHTML = SummaryContainer;
@@ -34,6 +38,36 @@
             }
         }
         http.send(params);
+    };
+
+    function getMyMessages(){
+      console.log("IN HERE")
+      var http = new XMLHttpRequest();
+      var url = '/getMyMessages'
+      http.open('POST', url, true);
+      var user_id = '<%= id %>'
+      var params = 'user_id='+user_id;
+
+      http.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+      http.onreadystatechange = function(){
+        if(http.readyState == 4 && http.status == 200){
+          var messages = JSON.parse(this.responseText);
+          var newLog = '<div class="list-group">'
+
+          for(log in messages){
+
+            newLog +='<div class="d-flex w-100 justify-content-between">'
+            +'<h5 class="mb-1">Order status</h5>'
+            +'<small>' +  messages[log].time_stamp + '</small>'
+            +'</div>'
+            +'<p class="mb-1">'+ messages[log].Message + '</p>'
+          }
+          newLog +='</div>';
+
+          document.getElementById("messageLog").innerHTML = newLog;
+        }
+      }
+      http.send(params);
     };
 
 
@@ -67,12 +101,14 @@
   </div>
 </div>
 
+<div class="row justify-content-center mt-4" >
+  <div class="col-md-8" id="messageLog"></div>
+</div>
+
 <div class="row justify-content-end">
   <div class="col-md-4">
     <button type=submit class='btn btn-primary'> Proceed to pay</button>
   </div>
 </div>
-
-
 
 </body>

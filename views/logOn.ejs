@@ -1,6 +1,6 @@
 <body>
 
-    <script type="text/javascript">
+    <script>
         function addUser(){
 
             var http = new XMLHttpRequest();
@@ -16,9 +16,6 @@
 
                     alert("You have been registered");
 
-                }
-                else{
-                    alert("Something whent whrong and we were unable to register you");
                 }
             };
             http.send(params);
