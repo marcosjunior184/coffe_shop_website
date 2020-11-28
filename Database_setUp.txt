@@ -3,3 +3,7 @@ mysql> CREATE TABLE menu (Item VARCHAR(55), Type VARCHAR(55), Description VARCHA
 mysql> CREATE TABLE Orders (Client_id INT, Item VARCHAR(55), Quantity INT, Order_total DOUBLE (5, 2), OrderNumber INT);
 
 mysql> CREATE TABLE customers (user_id INT AUTO_INCREMENT PRIMARY KEY, First_Name VARCHAR(55), Last_Name VARCHAR(55), Email VARCHAR(55), Order_Number INT, Birth_Day VARCHAR(11), Password VARCHAR(255));
+
+mysql> CREATE TABLE staff (staff_id INT AUTO_INCREMENT PRIMARY KEY, First_Name VARCHAR(55), Last_Name VARCHAR(55), Email VARCHAR(55), Birth_Day VARCHAR(55), Password VARCHAR (55), Employee_Number INT);
+
+mysql> CREATE TABLE messages (User_Email VARCHAR(55) PRIMARY KEY, Message VARCHAR(255));
