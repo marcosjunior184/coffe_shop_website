@@ -1,3 +1,35 @@
 body{
-    background-image: url('/Espresso.jpg');
+
+
+    background-image: url('/CoffeeShopTables.png');
+    background-repeat: no-repeat;
+    background-size: cover; 
+
+    color: blanchedalmond;
+
 }
+
+.jumbotron{
+    color: black;
+    background: rgba(207, 167, 133, 0.6)
+    
+}
+.tab-content{
+    color: black;
+    background: rgba(207, 167, 133, 0.6)
+}
+
+.list-group-item{
+    color: black;
+    background: rgba(207, 167, 133, 0.3)
+}
+
+.nav{
+    color: black;
+    background: rgba(207, 167, 133, 1)
+}
+.nav-link{
+    color: black;
+}
+
+
