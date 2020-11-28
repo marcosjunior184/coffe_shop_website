@@ -1,0 +1,53 @@
+<html>
+    <head>
+        <title>Coffee Shop</title>
+        <link rel="stylesheet" href="http://localhost:8080/navBar.css">
+    </head>
+    <body>
+        <script>
+            function removeFromMenu(){
+                var http = new XMLHttpRequest();
+                var url = '/menuRemove';
+                http.open('POST', url, true);
+                var params = "Item="+document.getElementById('Item').value;
+
+                http.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+
+
+                http.onreadystatechange = function(){
+
+                    if(http.readyState == 4 && http.status == 200 ){
+                        alert('The item has been removed');
+
+                    }
+                    else{
+
+                        alert("The item couldn't be find, please try again");
+                    }
+                }
+                http.send(params);
+            }
+        </script>
+
+
+        <div class="topnav">
+            <a class="active" href="http://localhost:8080/staffPage">Home</a>
+            <a href="http://localhost:8080/OrderReview">Oreders</a>
+            <a href="http://localhost:8080/MenuAdd">Add menu</a>
+            <a href="http://localhost:8080/MenuRemove">remove menu</a>
+            <a href="http://localhost:8080/">Log Out</a>
+        </div>
+        <div class="container" id="homePage">
+            <h3>Please indicate the name of the item you want to remove</h3>
+
+            <div class="removeMenu" id="MenuRemove">
+                <label>Insert the name of the item to be removed</label>
+                <br>
+                <input type="text" id="Item" placeholder="name of the item">
+                <br>
+                <button type="submit" onclick="removeFromMenu()">Remove</button>
+            </div>
+
+        </div>
+    </body>
+</html>

@@ -1,7 +1,7 @@
 <html>
     <head>
         <title>Coffee Shop</title>
-        <link rel="stylesheet" href="http://localhost:8080/staffPage.css">
+        <link rel="stylesheet" href="http://localhost:8080/navBar.css">
     </head>
     <body onload="getOrder()">
 
@@ -23,7 +23,7 @@
                         for (element in Order){
  
                             tableOrders += "<tr> <td>"+ Order[element].Item+"</td> <td>" + Order[element].OrderNumber+"</td>" 
-                                        + " <td><button type='submit' onclick='completeOrder("+ JSON.stringify(Order[element].Item)+','+ JSON.stringify(Order[element].OrderNumber) +")'> completed </button></td> </tr>";
+                                        + " <td><button type='submit' onclick='completeOrder("+ JSON.stringify(Order[element].Item)+','+ JSON.stringify(Order[element].OrderNumber) +','+ JSON.stringify(Order[element].Client_id)+")'> completed </button></td> </tr>";
 
                         }
                         
@@ -33,7 +33,7 @@
                 http.send();
             }
 
-            function completeOrder(item, OrderNumber){
+            function completeOrder(item, OrderNumber, UserEmail){
                 var http = new XMLHttpRequest();
                 var url = '/completeOrder';
                 http.open('POST', url, true);
@@ -44,14 +44,23 @@
                 http.onreadystatechange = function(){
                     if (http.readyState == 4 && http.status == 200){
                         alert("Order: "+OrderNumber+ " Has been completed");
+                        notifyUser(item, UserEmail)
                         getOrder();
                     }
                 }
                 http.send(params);
             }
 
-            async function notifyUser(Item, OrderNumber){
+            async function notifyUser(Item, UserEmail){
+                var http = new XMLHttpRequest();
+                var url = '/addMessage';
+                http.open('POST', url, true);
+                var params = 'Item='+Item+'&Email='+UserEmail;
+                
+                http.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 
+                http.send(params);
+                
             }
 
         </script>
@@ -60,7 +69,8 @@
             <a class="active" href="http://localhost:8080/staffPage">Home</a>
             <a href="http://localhost:8080/OrderReview">Oreders</a>
             <a href="http://localhost:8080/MenuAdd">Add menu</a>
-            <a href="http://localhost:8080/">remove menu</a>
+            <a href="http://localhost:8080/MenuRemove">remove menu</a>
+            <a href="http://localhost:8080/">Log Out</a>
         </div>
 
         <h3>Orders in the system</h3>
