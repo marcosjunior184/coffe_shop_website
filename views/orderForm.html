@@ -1,41 +1,9 @@
 <html>
     <head>
         <title>Coffee Shop</title>
+        <link rel="stylesheet" href="http://localhost:8080/navBar.css">
     </head>
     <body onload="toLoad()">
-        <style>
-            body {
-                margin: 0;
-                font-family: Arial, Helvetica, sans-serif;
-            }
-                            /* Add a black background color to the top navigation */
-            .topnav {
-                background-color: rgba(145, 99, 12, 0.442);
-                overflow: hidden;
-            }
-
-                /* Style the links inside the navigation bar */
-            .topnav a {
-                float: left;
-                color: #f2f2f2;
-                text-align: center;
-                padding: 14px 16px;
-                text-decoration: none;
-                font-size: 17px;
-            }
-
-                /* Change the color of links on hover */
-            .topnav a:hover {
-                background-color: #ddd;
-                color: rgba(165, 42, 42, 0.564)
-            }
-
-                /* Add a color to the active/current link */
-            .topnav a.active {
-                background-color:black;
-                color: white;
-            }
-        </style>
 
         <script>
 
@@ -91,7 +59,15 @@
                 var http = new XMLHttpRequest();
                 var url = '/addToOrder';
                 http.open('POST', url, true);
-                var params = 'Item='+item+'&Price='+price+'&OrderNumber='+orderNum;
+                var customerEmail = document.getElementById('email').value;
+                if (customerEmail === ""){
+                    alert("the email field is required to place a order")
+                    http.status = 404;
+                    window.location.reload(true);
+                    http.abort();
+                }else{
+                    var params = 'Item='+item+'&Price='+price+'&OrderNumber='+orderNum+'&Email='+customerEmail;
+                }
                 
                 http.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 
@@ -118,12 +94,16 @@
             <a href="http://localhost:8080/menu">Menu</a>
             <a href="http://localhost:8080/orderForm">Order</a>
             <a href="http://localhost:8080/myOrder">MyOrder</a>
+            <a href="http://localhost:8080/">Log Out</a>
         </div>
 
         <div class="container" id="orderN">
 
         </div>
 
+        <label> - Please also enter your email</label>
+        <input type="text" id="email" placeholder="Your email for the order">
+        <hr>
         <div class="container" id="orderForm">
             <div class="container" id="Espressos">
                 <p>Espressos</p>

@@ -1,51 +1,102 @@
 <html>
     <head>
         <title>Coffee Shop</title>
+        <link rel="stylesheet" href="http://localhost:8080/navBar.css">
     </head>
     <body>
-        <style>
-            body {
-                margin: 0;
-                font-family: Arial, Helvetica, sans-serif;
+        <script>
+            function getOrderByEmail(){
+                var http = new XMLHttpRequest();
+                var url = '/getOrderByEmail';
+                http.open('POST', url, true);
+                var params = 'Email='+document.getElementById('email').value;
+
+                http.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+
+                http.onreadystatechange = function(){
+                    if(http.readyState == 4 && http.status == 200 ){
+                        var myOrder = JSON.parse(this.responseText);
+                        var orderTable = '<table class="table" id="tableOrder"> <th>Item</th> <th>Quantity</th> <th>Price</th> <th>Total</th> <th></th>'
+                        var Total = 0;
+                        for (element in myOrder){
+                            Total +=  myOrder[element].Order_total;
+                            orderTable += '<tr> <td>'+ myOrder[element].Item+'</td> <td>'+ myOrder[element].Quantity +'</td> <td>'+ myOrder[element].Order_total +"</td> <td></td> <td><button type='submit' onclick='CancelOrder("+JSON.stringify(myOrder[element].Item)+','+JSON.stringify(myOrder[element].OrderNumber)+")'>Cancel</button></td> </tr>";
+                        }
+                        orderTable +='<tr> <td></td> <td></td> <td></td> <td>'+Total.toFixed(2)+'</td> <td></td> </tr> </table>'
+
+                        document.getElementById('Order-Container').innerHTML = orderTable;
+                    }
+                }
+                getMessages();
+                http.send(params);
             }
-                            /* Add a black background color to the top navigation */
-            .topnav {
-                background-color: rgba(145, 99, 12, 0.442);
-                overflow: hidden;
+        
+
+            function CancelOrder(Item, OrderNumber){
+                var http = new XMLHttpRequest();
+                var url = '/cancelOrder';
+                http.open('POST', url, true);
+                var params = 'Item='+Item + "&OrderNumber="+OrderNumber + '&Email='+document.getElementById('email').value;
+
+                http.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+                http.onreadystatechange = function (){
+                    if(http.readyState == 4 && http.status == 200 ){
+                        getOrderByEmail();
+                    }
+                }
+                http.send(params);
             }
 
-                /* Style the links inside the navigation bar */
-            .topnav a {
-                float: left;
-                color: #f2f2f2;
-                text-align: center;
-                padding: 14px 16px;
-                text-decoration: none;
-                font-size: 17px;
-            }
+            function getMessages(){
+                var http = new XMLHttpRequest();
+                var url = '/getMessage';
+                http.open('POST', url, true);
+                var params = 'Email='+document.getElementById('email').value;
 
-                /* Change the color of links on hover */
-            .topnav a:hover {
-                background-color: #ddd;
-                color: rgba(165, 42, 42, 0.564)
-            }
+                http.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+                http.onreadystatechange = function(){
+                    if (http.readyState == 4 && http.status == 200){
+                        var message = JSON.parse(this.responseText);
 
-                /* Add a color to the active/current link */
-            .topnav a.active {
-                background-color:black;
-                color: white;
+                        var messageTable = '<table class="table"> <th>Messages</th> <th></th>';
+
+                        for(element in message){
+                            messageTable += '<tr> <td>'+message[element].Message+"</td> </tr>";
+                        }
+                        document.getElementById("Message-container").innerHTML = messageTable;
+                    }
+                }
+                http.send(params);
             }
-        </style>
+        </script>
+
         <div class="topnav">
             <a class="active" href="http://localhost:8080/clientPage">Home</a>
             <a href="http://localhost:8080/menu">Menu</a>
             <a href="http://localhost:8080/orderForm">Order</a>
-            <a href="#about">MyOrder</a>
-          </div>
+            <a href="http://localhost:8080">MyOrder</a>
+            <a href="http://localhost:8080/">Log Out</a>
+        </div>
         
-          <div class="container" id="homePage">
-            <h1>My order</h1>
+        <div class="container" id="homePage">
+        <h1>My order</h1>
+        </div>
+        <div class="container">
+            <label>Please enter your email to search your order</label>
+            <br>
+            <input type="text" id="email" placeholder="Enter your email">
+            <br>
+            <button type="submit" onclick="getOrderByEmail()">Get my order</button>
+            <hr>
+        </div>
+        <div class="container" id="Order-Container">
 
-          </div>
+        </div>
+        <hr>
+        <div class="container" id="Message-container">
+
+        </div>
+
+
     </body>
 </html>

@@ -3,6 +3,28 @@
         <title>Coffee shop</title>
     </head>
     <body>
+        <script>
+            function checkUser(){
+                var http = new XMLHttpRequest();
+                var url = '/checkUser'
+                http.open('POST', url, true)
+                var params = 'Email='+document.getElementById('email').value + '&Password='+document.getElementById('password').value;
+
+                http.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+
+                http.onreadystatechange = function (){
+                    if (http.readyState ==4 && http.status == 200){
+                        window.location = "http://localhost:8080/clientPage";
+                    }
+                    else if (http.status == 404){
+                        alert("email or password invalid");
+                        window.location.reload(true);
+                        http.abort()
+                    }
+                }
+                http.send(params);
+            }
+        </script>
         <div class="container" id="client_login">
             <h1>Log in</h1>
             <div class="container">
@@ -10,11 +32,14 @@
                 <input id="email" class="email" placeholder="your@email.com">
                 <br>
                 <label for="password">Password</label>
-                <input id="pasword" class="password">
+                <input id="password" class="password">
             </div>
             <br>
             <div>
-                <button type="submit">Log in</button>
+                <form action="http://localhost:8080/">
+                    <button type="submit">Back</button>
+                </form>
+                <button type="submit" onclick="checkUser()">Log in</button>
             </div>
             <br>
             <a href="http://localhost:8080/clientLogon">not a member ?</a>

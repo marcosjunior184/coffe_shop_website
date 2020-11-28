@@ -3,6 +3,29 @@
         <title>Coffee shop</title>
     </head>
     <body>
+        <script>
+            function checkUser(){
+                var http = new XMLHttpRequest();
+                var url = '/checkStaff'
+                http.open('POST', url, true)
+                var params = 'EmployeeNumber='+document.getElementById('employee_number').value + '&Password='+document.getElementById('password').value;
+
+                http.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+
+                http.onreadystatechange = function (){
+                    if (http.readyState ==4 && http.status == 200){
+                        window.location = "http://localhost:8080/staffPage";
+                    }
+                    else if (http.status == 404){
+                        alert("employee number or password invalid");
+                        window.location.reload(true);
+                        http.abort()
+                    }
+                }
+                http.send(params);
+            }
+        </script>
+
         <div class="container" id="client_login">
             <h1>Staff log in</h1>
             <div class="container">
@@ -10,11 +33,14 @@
                 <input id="employee_number" class="number" placeholder="your employee number">
                 <br>
                 <label for="password">Password</label>
-                <input id="pasword" class="password">
+                <input type="password" id="password" class="password">
             </div>
             <br>
             <div>
-                <button type="submit">Log in</button>
+                <form action="http://localhost:8080/">
+                    <button type="submit">Back</button>
+                </form>
+                <button type="submit" onclick="checkUser()">Log in</button>
             </div>
             <br>
             <a href="http://localhost:8080/clientLogin">not a staff ?</a>
