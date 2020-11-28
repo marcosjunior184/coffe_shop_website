@@ -14,7 +14,7 @@ const LocalStrategy = require('passport-local').Strategy;
 const session = require('express-session');
 const { use, authenticate } = require('passport');
 const Store = require('express-session').Store;
-const db = require('./db_access');
+const auth = require('./authentication')
 
 
 //const redis = require('redis');
@@ -166,6 +166,7 @@ var con = mysql.createConnection({
 /**
  * connect to database
  */
+
 con.connect(function(err){
     if (err) {
         throw err;
@@ -173,33 +174,23 @@ con.connect(function(err){
     console.log("Connect")
 });
 
-// ------------------- ROUTERS --------------------------//
+
+// ----------------------------------------------------------- ROUTERS ------------------------------------------------------------------//
 
 
-/**
- * GET for Root
- */
-app.get('/', (req, res) => {
-    
-    res.render('index', {name: req.session.username});
-});
+app.get('/', (req, res) => { res.render('index', {name: req.session.username});}); // GET for Root
 
-/**
- * Getter for item selected in the Order
- */
-app.get('/Item/:itemName/:Price', (req, res) =>{
-    res.render('Item', {item: req.params['itemName'], price: req.params['Price'], id: req.session.user_id});
-})
+app.get('/login', (req, res) => { res.render('login', {message: req.flash('message')});}) // GET for log in
 
-/**
- * Post method to get a particular item
- */
-app.post('/getItem', getItem);
+app.get('/staffLogin', (req, res) => {res.render('staff/staffLogin', {message: req.flash('message')})}); // GET for the staf login page
 
-/**
- * GET for log in
- */
-app.get('/login', (req, res) => { res.render('login', {message: req.flash('message')});})
+app.get('/StafflogOn', auth.managerAuthentication,(req, res) => {res.render('staff/StaffLogOn')}); // GET to staff log on page
+
+app.get('/menu',(req, res) => { res.render('menu')}); // GET for Menu
+
+app.get('/logOn', (req, res) => {res.render('logOn')}); // GET method for log on
+
+//----------------------------------------------------------------XHR---------------------------------------------------------------------//
 
 /**
  * POST method to log in user.
@@ -212,10 +203,6 @@ app.post('/login', passport.authenticate('local', {
     res.render('login', {'message': req.flash('message')});
 });
 
-/**
- * GET for the staf login page
- */
-app.get('/staffLogin', (req, res) => {res.render('staff/staffLogin', {message: req.flash('message')})});
 
 /**
  * POST method to authenticate a staff log in 
@@ -226,10 +213,6 @@ app.post('/staffLogIn', passport.authenticate('Staff_logIn', {
     failureFlash: true
 }),(req, res) => {res.render('staffLogin', {message: req.flash('message')})});
 
-/**
- * GET for the staff page where the staff_user can check orders and remove them. If the user is Manager will have the ability to add staff to the system
- */
-app.get('/staffPage', staffAuthentication,(req, res) => {res.render('staff/staffPage', {name: req.session.username, permission: req.session.user_permission})});
 
 /**
  * POST method add a new staff
@@ -237,126 +220,19 @@ app.get('/staffPage', staffAuthentication,(req, res) => {res.render('staff/staff
 app.post('/insertStaff', insertNewStaff);
 
 /**
- * GET to staff log on page
- */
-app.get('/StafflogOn', managerAuthentication,(req, res) => {res.render('staff/StaffLogOn')});
-
-app.get('/OrderReview', staffAuthentication, (req, res) => {res.render('staff/OrderReview')});
-
-app.get('/getOrderReview', getUsersOrder);
-
-app.get('/AddToMenu', managerAuthentication, (req, res) => {res.render('staff/AddToMenu')});
-
-app.post('/addToMenu', addToMenu);
-
-app.get('/EditMenu', managerAuthentication, (req, res) => {res.render('staff/EditMenu')});
-
-app.post('/itemEdit', managerAuthentication, itemEdit);
-
-app.get('/EditItem/:Item', managerAuthentication, (req, res) => { res.render('staff/EditItem', {item: req.params['Item']})});
-
-app.post('/RemoveFromMenu', deleteFromMenu);
-
-app.get('/StaffManagent', managerAuthentication, (req, res) => { res.render('staff/StaffManagement')});
-
-app.post('/getStaff', getStaff);
-
-app.post('/RemoveStaff', RemoveStaff);
-
-app.get('/staffEdit/:StaffNumber', managerAuthentication, (req, res) => {res.render('staff/StaffEdit', {emp_number: req.params['StaffNumber']})});
-
-app.post('/EditStaff', EditStaff);
-
-
-/**
- * GET for Menu
- */
-app.get('/menu',menu);
-
-/**
- * GET for the XML load the menu from database to be displayed on /menu
- */
-app.get('/menuData', getMenuData);
-
-/**
- * GET method for log on
- */
-app.get('/logOn', (req, res) => {res.render('logOn')});
-
-
-/**
  * POST method to add a new user
  */
 app.post('/insertUser', inserNewUser);
 
-/**
- * A GET method for my order
- */
-app.get('/myOrder', isAuthenticated,(req, res) => {res.render('myOrder',{id: req.session.user_id})});
 
 /**
- * A GET method for Order
+ * Post method to get a particular item
  */
-app.get('/Order', isAuthenticated ,(req, res) => {res.render('OrderForm', {name: req.session.username})});
+app.post('/getItem', getItem);
 
-/**
- * POST to set a order to the database
- */
-app.post('/setOrder', setOrder);
-
-/**
- * POST method to get the order of a user from the database
- */
-app.post('/getMyOrder', getMyOrder);
-
-/**
- * POST to delet an Item from a user's order
- */
-app.post('/deleteItem', deleteItem);
-
-// ------------------------   FUNCTIONS FOR THE ROUTERS -------------------------//
-
-/**
- * Render menu
- * @param {*} req - Request 
- * @param {*} res - Response
- */
-async function menu(req, res){
-    res.render('menu')
-}
-
-/**
- * A function to get menu table from database
- * @param {*} req - Request
- * @param {*} res - Response
- */
-async function getMenuData(req, res){
-    var sql = "SELECT * FROM menu"
-    con.query(sql, function(err, result, filds){
-        if (err){
-            throw err;
-        }
-        res.send(result);
-    });
-}
-
-function addToMenu(req, res){
-    var item = req.body.Item;
-    var price = req.body.Price;
-    var type = req.body.Type;
-    var description = req.body.Description;
-
-    var sql = 'INSERT INTO menu (Item, Type, Description, Price) VALUES ('+JSON.stringify(item)+','+JSON.stringify(type)+','+JSON.stringify(description)+','+price+');'
+// ------------------------------------------------------------------------------FUNCTIONS-----------------------------------------------------------//
 
 
-    con.query(sql, function(err, ressult, fields){
-        if (err){
-            throw err;
-        }
-        res.send();
-    })
-    
-}
 
 /**
  * Get an Item from the database menu
@@ -390,7 +266,7 @@ async function inserNewUser(req, res){
     }catch{
         res.send('ERROR')
     }
-    var sql = 'INSERT INTO customers (First_Name, Last_Name, Email, Birth_Day, Password, authorization) VALUES ('+ JSON.stringify(firstName)+','+JSON.stringify(lastName)+','+JSON.stringify(Email)+','+JSON.stringify(BirthDay)+','+JSON.stringify(hashedPassword)+', Client);';
+    var sql ='INSERT INTO customers (First_Name, Last_Name, Email, Birth_Day, Password, authorization) VALUES ('+ JSON.stringify(firstName)+','+JSON.stringify(lastName)+','+JSON.stringify(Email)+','+JSON.stringify(BirthDay)+','+JSON.stringify(hashedPassword)+', "Client");';
     con.query(sql, function(err, result, fields){
         if(err){
             throw err;
@@ -416,7 +292,6 @@ async function insertNewStaff(req, res){
     }catch{
         res.send('ERROR')
     }
-
     var sql = 'INSERT INTO staff (Employee_Number, First_Name, Last_Name, Email, Birth_Day, Password, authorization) VALUES ('+ JSON.stringify(EmployeeNumber) +','+ JSON.stringify(firstName)+','+JSON.stringify(lastName)+','+JSON.stringify(Email)+','+JSON.stringify(BirthDay)+','+JSON.stringify(hashedPassword)+','+ JSON.stringify(permission) + ');';
     con.query(sql, function(err, result, fields){
         if(err){
@@ -424,225 +299,13 @@ async function insertNewStaff(req, res){
         }
         res.send();
     });    
-    
 }
-
-/**
- * A function to check if the user is authenticated or not:
- *  - If yes, access is conceded
- *  - If not, direct to log in
- * @param {*} req - Request
- * @param {*} res - Response
- * @param {*} next - allowed next
- */
-function isAuthenticated(req, res, next) {
-    if (req.isAuthenticated()){
-        return next();
-    }
-    res.redirect('/login');
-}
-
-/**
- * Function to authenticate a staff user or a manager user
- * @param {*} req - Request
- * @param {*} res - Response 
- * @param {*} next - callback
- */
-function staffAuthentication(req, res, next){
-    if(req.session.user_permission == 'Staff' || req.session.user_permission == 'Manager' ){
-        if (req.isAuthenticated()){
-            return next();
-        }
-        res.redirect('/staffLogin');
-    }
-    else{
-        res.redirect('/staffLogin');
-    }
-}
-
-/**
- * Function to authenticate a staff user or a manager user
- * @param {*} req - Request
- * @param {*} res - Response 
- * @param {*} next - callback
- */
-function managerAuthentication(req, res, next){
-    if(req.session.user_permission == 'Manager' ){
-        if (req.isAuthenticated()){
-            return next();
-        }
-        res.redirect('/staffPage');
-    }
-    else{
-        res.redirect('/staffLogin');
-    }
-}
-
-function getUsersOrder(req, res){
-    var sql = "SELECT * FROM Orders;";
-    con.query(sql, function(err, ressult, fields){
-        if (err){
-            throw err;
-        }
-        res.send(ressult);
-    })
-}
-
-/**
- * Set a order of a user in the 'Orders' database
- * @param {*} req - Request 
- * @param {*} res - Response 
- */
-  function setOrder(req, res){
-      var item = req.body.item;
-      var id = req.body.id;
-      var quantity = req.body.quantity;
-      var price = req.body.price * quantity;
-
-      var sql = "INSERT INTO Orders (Client_id, Item, Quantity, Order_total) VALUES ("+id +', '+JSON.stringify(item)+ ', '+quantity+', '+price + ');';
-      con.query(sql, function(err, result, fields){
-          if(err){
-              throw err;
-          }
-          res.end();
-      })
-       
-  }
-
-  /**
-   * If the database 'Orders' is empty, set the id AUTO_INCREMENT will be reset to 1
-   * So by the end of the day the table should be empty and set back to 1, as we don't want 
-   * the id keep increasing for ever
-   * @param {*} req - Request
-   * @param {*} res - Response
-   */
-  function checkOrder(req, res){
-    var sql = "SELECT EXISTS(SELECT 1 from Orders) AS OUTPUT;";
-    con.query(sql, function(err, result, fields){
-        if(err){
-            throw err;
-        }
-        if(JSON.stringify(result[0].OUTPUT) == 0){
-            con.query("ALTER TABLE Orders AUTO_INCREMENT=1;", function(err, result, fields){
-                if (err){
-                    throw err;
-                }
-            })
-        }
-    })
-  }
-
-  /**
-   * Method to get the Order of a certain user from the database based on the client id
-   * @param {*} req - Request
-   * @param {*} res - Response
-   */
-  function getMyOrder(req, res){
-    checkOrder(req, res);
-    var user_id = req.body.user_id;
-    var sql = "SELECT * FROM Orders WHERE Client_id="+user_id;
-    con.query(sql, function(err, result, fields){
-        if (err){
-            throw err;
-        }
-        res.send(result);
-    })
-  }
-
-  function getStaff(req, res){
-    var sql = 'SELECT * FROM staff ;';
-
-    con.query(sql, function (err, result, fields){
-        if (err){
-            throw err;
-        }
-        res.send(result);
-    })
-  }
-
-  /**
-   * Delete an item from a customer order removing it from the database
-   * @param {*} req - Request
-   * @param {*} res - Response
-   */
-  function deleteItem(req, res){
-      var itemToDelete = req.body.item_id;
-
-
-      var sql = "DELETE FROM Orders WHERE order_id="+itemToDelete;
-      con.query(sql, function(err, result, fields){
-          if (err){
-              throw err;
-          }
-      })
-  }
-
-  function RemoveStaff(req, res){
-      var staffToRemove = req.body.Emp_Number;
-
-      var sql = 'DELETE FROM staff WHERE Employee_Number='+staffToRemove;
-
-      con.query(sql, function(err, result, fields){
-          if (err){
-              throw err;
-          }
-          res.send();
-      })
-  }
-
-  function EditStaff(req, res){
-      var column = req.body.field;
-      var value = req.body.value;
-      var item = req.body.Emp_Number;
-
-      var sql = 'UPDATE staff SET '+column+'='+ JSON.stringify(value)+' Where Employee_Number='+item +' ;';
-
-      con.query(sql, function(err, result, field){
-          if (err){
-              throw err;
-          }
-          res.send();
-      })
-  }
-
-  function itemEdit(req, res){
-    var column = req.body.field;
-    var value = req.body.value;
-    var item = req.body.Item;
-    
-    if (column == 'Promotion' || column == 'Price'){
-        var sql = 'UPDATE menu SET '+column+'='+ value+' Where Item='+JSON.stringify(item) +' ;';
-    }
-    else{
-    var sql = 'UPDATE menu SET '+column+'='+ JSON.stringify(value)+' Where Item='+JSON.stringify(item) +' ;';
-    }
-
-    con.query(sql, function (err, ressult, fields){
-        if (err) {
-            throw err;
-        }
-
-        res.send();
-    })
-  }
-
-  function deleteFromMenu(req, res){
-      var item = req.body.Item;
-
-      var sql = ('DELETE FROM menu WHERE Item='+JSON.stringify(item)+';')
-      con.query(sql, function(err, ressult, fields){
-          if (err){
-              throw err;
-          }
-      })
-      
-  }
-
 
 
 app.use('/', express.static('views'));
 
-app.use(require('./db_access'));
+app.use(require('./Client_server'));
+app.use(require('./staff_server'));
 
 app.listen(PORT, HOST);
 console.log('up and running');
