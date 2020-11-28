@@ -7,7 +7,6 @@
             var http = new XMLHttpRequest();
             var url = '/getOrderReview'
             http.open('GET', url, true);
-            console.log("BEEN CONTACTED")
             http.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
     
             http.onreadystatechange = function (){
@@ -19,11 +18,11 @@
                     var quantityTotal = 0;
     
                     for (element in Order){
-                      SummaryContainer += "<tr> <td>"+ Order[element].Item+"</td> <td>"+ Order[element].Quantity +"</td> <td>$" + Order[element].Order_total +"</td> <td><button 'type=submit' class='btn btn-primary' onclick='removeFromOrder("+ Order[element].order_id+")'>Remove</button></td></tr>";
+                      SummaryContainer += "<tr> <td>"+ Order[element].Item+"</td> <td>"+ Order[element].Quantity +"</td> <td>$" + Order[element].Order_total +"</td> <td><button type='submit' class='btn btn-primary' onclick='removeFromOrder("+ Order[element].order_id+","+Order[element].Client_id+","+JSON.stringify(Order[element].Item)+")'>Remove</button></td></tr>";
     
                       orderTotal += Order[element].Order_total;
                       quantityTotal += Order[element].Quantity;
-                      console.log(orderTotal+ '--' + Order[element].Order_total);
+
                     }
                     SummaryContainer+= "</table>";
                     document.getElementById("summary").innerHTML = SummaryContainer;
@@ -34,8 +33,8 @@
         };
     
     
-        function removeFromOrder(order_id){
-          var http = new XMLHttpRequest();
+        function removeFromOrder(order_id, Client_id, item){
+            var http = new XMLHttpRequest();
             var url = '/deleteItem'
             http.open('POST', url, true);
             var params = 'item_id='+order_id;
@@ -44,12 +43,28 @@
             http.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
     
             http.onreadystatechange = function (){
-              if(http.readyState == 4 && http.status == 200){
-                  alert("Its been removed");
-              }
+                if(http.readyState == 4 && http.status == 200){
+                    alert("Its been removed");
+                }
             }
             http.send(params);
             getOrders();
+            addMessage(Client_id, item);
+        }
+
+        function addMessage(Client_id, item){
+            var http = new XMLHttpRequest();
+            var url = '/addMessage';
+            http.open('POST', url, true);
+            var params = 'client_id='+Client_id+'&message=Your '+item +' is ready and waiting for you';
+            http.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+    
+            http.onreadystatechange = function (){
+                if(http.readyState == 4 && http.status == 200){
+                    alert("Message added");
+                }
+            }
+            http.send(params);
         }
     </script>
 
