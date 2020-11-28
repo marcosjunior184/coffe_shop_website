@@ -6,18 +6,77 @@ DATABASE: coffeeshop
 TABLES:
     - customers
     - menu
+    - Orders
+    - staff
+    - messages
 
 
  - The database for user aims to storage important information from the user so the store can better serve the customers, been faster and knowing their preference.
 
 mysql> CREATE TABLE custumers (user_id INT AUTO_INCREMENT PRIMARY KEY, First_Name VARCHAR(55), Last_Name VARCHAR(55), Email VARCHAR(55), myOrder VARCHAR(255), Birth_Day VARCHAR(11), Password VARCHAR(255));
-
-
- - The Menu database is created to display new items to the store, the menu table is consisted of: item, description, promotion, and price. The promotion can be added and removed
-   as needed
+mysql> SELECT * FROM customers;
++---------+------------+-----------------+-----------------+------------+--------------------------------------------------------------+---------------+
+| user_id | First_Name | Last_Name       | Email           | Birth_Day  | Password                                                     | authorization |
++---------+------------+-----------------+-----------------+------------+--------------------------------------------------------------+---------------+
+|       1 | Marcos     | da Silva Junior | mad184@usask.ca | 1998-01-10 | $2b$10$.6ect8hRnbQPXU4IYsTx/ODWRqnphqQwOeuzguRYXaVWQggsk5VEa | Client        |
+|       6 | Arthur     | Colasso         | art@usask.ca    | 1988-03-10 | $2b$10$iXSN.6ggkRYejwSlW3r3duOxg6hv0vCbk7KFm19BBWUQVGPdGqj2W | Client        |
+|       7 | Joyce      | Colasso         | jyc@usask.ca    | 1988-01-19 | $2b$10$P2JMZPN3no7wboTfDgbeXuZSu7tqbBgciaAtJUZ1UjJDsvZPv/sdW | Client        |
+|       8 | Carlos     | Zappien         | clz@usask.ca    | 1990-08-23 | $2b$10$fq.6fa4jB6/I8uQY2qozi.MiB0SjN9qgxa8.0bYaCAECx6qyBmFKe | Client        |
+|       9 | Josiane    | Marly           | jsm@usask.ca    | 1990-07-23 | $2b$10$WbxTGhSLUMoUv0djxxZOeOrBj.XtTV2wGBo4q53ZlwNYcREG4XQVK | Client        |
+|      10 | Angus      | Pendant         | ang@usask.ca    | 2000-07-12 | $2b$10$f9Wrax1at5Mux1wacG1Tjet6rhWlz8Saly93HcLTEbeEwINnA2WK. | Client        |
+|      11 | Alan       | Matiaz          | alm@usask.ca    | 2000-04-09 | $2b$10$GJHrFMLnTHRCVCmduh9H2eCnAeOqmHgB2UeV3UF0U2nPCme066I/y | Client        |
+|      12 | Mateo      | Aria            | mta@usask.ca    | 1997-08-10 | $2b$10$JgBoL9pCluFuNa3dyXYZL.aW8FW7FPtjAEkpim6BIE9Bnu2mq5pm2 | Client        |
+|      15 | Arlin      | V               | arl@usask.ca    | 1988-01-19 | $2b$10$ml87V6QKfB.K2FJqYkyo/O4hoolC8H5kojQOnLyH1pqWFaB8rk1li | Client        |
++---------+------------+-----------------+-----------------+------------+--------------------------------------------------------------+---------------+
 
 mysql> CREATE TABLE menu (Item VARCHAR(55), Type VARCHAR(55), Description VARCHAR(255), Promotion INT, Price DOUBLE(5,2));
+mysql> SELECT * FROM menu;
++----------------------+-----------+-----------------------------------------------------------------------------+-----------+-------+
+| Item                 | Type      | Description                                                                 | Promotion | Price |
++----------------------+-----------+-----------------------------------------------------------------------------+-----------+-------+
+| Espresso             | Espressos | Finely-grounded and Concentrated coffee                                     |      NULL |  1.99 |
+| Doppio               | Espressos | Double shot espresso. 2x more caffeine                                      |      NULL |  2.49 |
+| Con Panna            | Espressos | Double shot with whipped cream on top                                       |      NULL |  2.49 |
+| Americano 10 oz      | Espressos | Double shot topped with hot water                                           |      NULL |  2.99 |
+| Americano 16 oz      | Espressos | Double shot topped with hot water                                           |      NULL |  3.99 |
+| Cafe Latte 10 oz     | Lattes    | Espresso with steamed milk                                                  |      NULL |  3.49 |
+| Cafe Latte 16 oz     | Lattes    | Espresso with steamed milk                                                  |      NULL |  4.49 |
+| Cafe Mocha 10 oz     | Lattes    | Espresso with steamed milk topped with whipped cream and sprinkles of cocoa |      NULL |  3.49 |
+| Cafe Mocha 16 oz     | Lattes    | Espresso with steamed milk topped with whipped cream and sprinkles of cocoa |      NULL |  4.49 |
+| Hot Chocolate 10 oz  | Lattes    | Cocoa with steamed milk topped with whipped cream and sprinkles of cocoa    |      NULL |  3.49 |
+| Hot Chocolate 16 oz  | Lattes    | Cocoa with steamed milk topped with whipped cream and sprinkles of cocoa    |      NULL |  4.49 |
+| Chai Latte 10 oz     | Teas      | Spiced tea with steamed milk and sprinkles of cinnamon                      |      NULL |  3.49 |
+| Chai Latte 16 oz     | Teas      | Spiced tea with steamed milk and sprinkles of cinnamon                      |      NULL |  4.49 |
+| London Fog 10 oz     | Teas      | Earl Grey tea with steamed milk                                             |      NULL |  3.49 |
+| London Fog 16 oz     | Teas      | Earl Grey tea with steamed milk                                             |      NULL |  4.49 |
+| Green Tea 16 oz      | Teas      | Green Tea                                                                   |      NULL |  2.25 |
+| Black Tea 16 oz      | Teas      | Black Tea                                                                   |      NULL |  2.25 |
+| Peppermint Tea 16 oz | Teas      | Peppermint Tea                                                              |      NULL |  2.25 |
+| Rooibos Tea 16 oz    | Teas      | Rooibos Tea                                                                 |      NULL |  2.25 |
+| Chocolate Donut      | Breakfast | Freshly baked donut covered with chocolate. Just perfect                    |      NULL |  2.30 |
+| Cinnamon Bun         | Breakfast | Freshly bakes Cinnamon roll                                                 |      NULL |  3.75 |
++----------------------+-----------+-----------------------------------------------------------------------------+-----------+-------+
 
 mysql> CREATE TABLE Orders (Client_id INT, Item VARCHAR(55), Quantity INT, Order_total DOUBLE (5, 2), order_id INT AUTO_INCREMENT KEY);
+mysql> SELECT * FROM Orders;
++-----------+---------------------+----------+-------------+----------+
+| Client_id | Item                | Quantity | Order_total | order_id |
++-----------+---------------------+----------+-------------+----------+
+|         1 | Espresso            |        1 |        1.99 |        4 |
+|         1 | Cinnamon Bun        |        1 |        3.75 |        5 |
+|         6 | Hot Chocolate 10 oz |        1 |        3.49 |        6 |
+|         6 | Chocolate Donut     |        1 |        2.30 |        7 |
++-----------+---------------------+----------+-------------+----------+
 
-mysql> CREATE TABLE staff (Employee_Number INT PRIMARY KEY, First_Name VARCHAR(55), Email VARCHAR(55), Birth_Day VARCHAR(55), Password VARCHAR(255), authorization VARCHAR(55));
+mysql> CREATE TABLE staff (Employee_Number INT PRIMARY KEY, First_Name VARCHAR(55), Email VARCHAR(55), Birth_Day VARCHAR(55), Password VARCHAR(255), authorization VARCHAR(55), Last_Name VARCHAR(55));
+mysql> SELECT * FROM staff;
++-----------------+------------+--------------+------------+--------------------------------------------------------------+---------------+-----------+
+| Employee_Number | First_Name | Email        | Birth_Day  | Password                                                     | authorization | Last_Name |
++-----------------+------------+--------------+------------+--------------------------------------------------------------+---------------+-----------+
+| 01253574        | Mark       | mkr@usask.ca | 1998-01-10 | $2b$10$R2R9YmTlNqqMM9oqdco6MOEdz3J4YmYY9FYYVsN4GjvckemKFBEKe | Manager       | Russi     |
+| 112233          | Amy        | aml@usask.ca | 1980-10-10 | $2b$10$tNI7uuWOBuj.XDOBVUk6ru08qvgQD2DA7KFgNJg6ziSrDjE.VXF.. | Manager       | Lambert   |
+| 123321          | Kevin      | kvs@usask.ca | 1998-05-13 | $2b$10$6WcQb8FgIAKikqN52oK4/.kY96awVSoJzdRniqABDRKatWr3cHavW | Staff         | Smith     |
+| 159753          | Mike       | mkw@usask.ca | 1988-10-10 | $2b$10$e5uHgtpwUYOP7Ct7h2s66O2ZHfhIqFyLM9QPJ0onGTgvToYzynvye | Staff         | Kowalski  |
++-----------------+------------+--------------+------------+--------------------------------------------------------------+---------------+-----------+
+
+mysql> CREATE TABLE messages (Client_id INT, Message VARCHAR(255), time_stamp VARCHAR(55));
